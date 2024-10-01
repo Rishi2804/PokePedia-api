@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PokemonService {
@@ -20,10 +21,10 @@ public class PokemonService {
         this.pokemonRepository = pokemonRepository;
     }
 
-    public PokemonDto getPokemonById(Integer id) {
-        Pokemon pokemon = pokemonRepository.getPokemonById(id);
+    public Optional<PokemonDto> getPokemonById(Integer id) {
+        Optional<Pokemon> pokemon = pokemonRepository.getPokemonById(id);
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
-        return mapToPokemonDto(pokemon, dexNumbers);
+        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers));
     }
 
     public List<PokemonDexSnapDto> getDexByRegion(String name) {

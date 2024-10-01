@@ -1,6 +1,7 @@
 package com.rishi.PokePedia.model;
 
 public enum PokedexRegion {
+    NATIONAL("national", null),
     KANTO("kanto", 1),
     ORIGINAL_JOHTO("original-johto", 2),
     HOENN("hoenn", 3),

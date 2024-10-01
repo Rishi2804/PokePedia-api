@@ -3,12 +3,14 @@ package com.rishi.PokePedia.repository;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rishi.PokePedia.model.*;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 @Repository
 public class PokemonRepository {
@@ -21,9 +23,13 @@ public class PokemonRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Pokemon getPokemonById(Integer id) {
+    public Optional<Pokemon> getPokemonById(Integer id) {
         String sql = "SELECT * FROM pokemon WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, PokemonRepository::pokemonRowMapper, id);
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, PokemonRepository::pokemonRowMapper, id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     public List<DexNumbers> getDexNumbersFromPokemon(Integer id) {
