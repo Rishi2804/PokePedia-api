@@ -87,10 +87,7 @@ public class PokemonRepository {
     private static DexNumbers dexNumberRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
         return new DexNumbers(
                 rs.getInt("num"),
-                rs.getInt("species_id"),
-                PokedexRegion.fromName(rs.getString("name")),
-                rs.getInt("default_variate"),
-                (Integer[]) rs.getArray("alt_variates").getArray()
+                PokedexRegion.fromName(rs.getString("name"))
         );
     }
 
