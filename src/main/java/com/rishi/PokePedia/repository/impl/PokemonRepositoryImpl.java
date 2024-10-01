@@ -24,6 +24,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public Optional<Pokemon> getPokemonById(Integer id) {
         String sql = "SELECT * FROM pokemon WHERE id = ?";
         try {
@@ -33,16 +34,19 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         }
     }
 
+    @Override
     public List<DexNumbers> getDexNumbersFromPokemon(Integer id) {
         String sql = "SELECT * FROM dexnumber WHERE default_variate = ? OR alt_variates @> ARRAY[?]";
         return jdbcTemplate.query(sql, PokemonRepositoryImpl::dexNumberRowMapper, id, id);
     }
 
+    @Override
     public List<EvolutionLine> getEvolutionChainOfPokemon(Integer id) {
         String sql = "SELECT * FROM get_evolution_chain_by_id(?)";
         return jdbcTemplate.query(sql, PokemonRepositoryImpl::evolutionRowMapper, id);
     }
 
+    @Override
     public List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         if (pokedexRegion == PokedexRegion.NATIONAL) {
             String sql = "SELECT s.id AS num, p.id, s.name, p.type1, p.type2 FROM pokemon p " +

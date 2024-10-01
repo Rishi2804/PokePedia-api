@@ -19,6 +19,7 @@ public class PokemonServiceImpl implements PokemonService {
         this.pokemonRepository = pokemonRepository;
     }
 
+    @Override
     public Optional<PokemonDto> getPokemonById(Integer id) {
         Optional<Pokemon> pokemon = pokemonRepository.getPokemonById(id);
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
@@ -26,6 +27,7 @@ public class PokemonServiceImpl implements PokemonService {
         return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain));
     }
 
+    @Override
     public List<PokemonDexSnapDto> getDexByRegion(String name) {
         PokedexRegion region = PokedexRegion.fromName(name);
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
