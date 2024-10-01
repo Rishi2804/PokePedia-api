@@ -43,7 +43,14 @@ public class PokemonRepository {
     }
 
     public List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion) {
-        String sql = "SELECT d.num, p.id, s.name, " +
+        String sql = "";
+        if (pokedexRegion == PokedexRegion.NATIONAL) {
+            sql = "SELECT s.id AS num, p.id, s.name, p.type1, p.type2 FROM pokemon p " +
+                    "JOIN species s ON s.id = p.species_id " +
+                    "ORDER BY s.id, p.id ASC";
+            return jdbcTemplate.query(sql, PokemonRepository::pokedexRowMapper);
+        } else {
+            sql = "SELECT d.num, p.id, s.name, " +
                     "COALESCE(pt.type1, p.type1) AS type1, " +
                     "CASE WHEN pt.type1 IS NOT NULL THEN pt.type2 ELSE p.type2 END AS type2 " +
                     "FROM dexnumber d " +
@@ -52,7 +59,8 @@ public class PokemonRepository {
                     "LEFT JOIN pasttypes pt ON p.id = pt.pokemon_id AND pt.gen >= ? " +
                     "WHERE d.name::text = ? " +
                     "ORDER BY d.num, CASE WHEN p.id = d.default_variate THEN 0 ELSE 1 END";
-        return jdbcTemplate.query(sql, PokemonRepository::pokedexRowMapper, pokedexRegion.getGen(), pokedexRegion.getName());
+            return jdbcTemplate.query(sql, PokemonRepository::pokedexRowMapper, pokedexRegion.getGen(), pokedexRegion.getName());
+        }
     }
 
     private static Pokemon pokemonRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
