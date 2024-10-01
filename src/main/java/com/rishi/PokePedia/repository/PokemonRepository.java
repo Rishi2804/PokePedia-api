@@ -37,6 +37,11 @@ public class PokemonRepository {
         return jdbcTemplate.query(sql, PokemonRepository::dexNumberRowMapper, id, id);
     }
 
+    public List<EvolutionLine> getEvolutionChainOfPokemon(Integer id) {
+        String sql = "SELECT * FROM get_evolution_chain_by_id(?)";
+        return jdbcTemplate.query(sql, PokemonRepository::evolutionRowMapper, id);
+    }
+
     public List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         String sql = "SELECT d.num, p.id, s.name, " +
                     "COALESCE(pt.type1, p.type1) AS type1, " +
@@ -106,6 +111,19 @@ public class PokemonRepository {
                 rs.getString("name"),
                 Type.fromString(rs.getString("type1")),
                 type2
+        );
+    }
+
+    private static EvolutionLine evolutionRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        return new EvolutionLine(
+                rs.getInt("id"),
+                rs.getInt("from_pokemon"),
+                rs.getString("from_display"),
+                rs.getInt("to_pokemon"),
+                rs.getString("to_display"),
+                (String[]) rs.getArray("details").getArray(),
+                rs.getString("region"),
+                rs.getInt("alt_form")
         );
     }
 }

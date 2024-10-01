@@ -2,10 +2,7 @@ package com.rishi.PokePedia.service;
 
 import com.rishi.PokePedia.dto.PokemonDexSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
-import com.rishi.PokePedia.model.DexNumbers;
-import com.rishi.PokePedia.model.PokedexRegion;
-import com.rishi.PokePedia.model.Pokemon;
-import com.rishi.PokePedia.model.PokemonDexSnap;
+import com.rishi.PokePedia.model.*;
 import com.rishi.PokePedia.repository.PokemonRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +21,8 @@ public class PokemonService {
     public Optional<PokemonDto> getPokemonById(Integer id) {
         Optional<Pokemon> pokemon = pokemonRepository.getPokemonById(id);
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
-        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers));
+        List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
+        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain));
     }
 
     public List<PokemonDexSnapDto> getDexByRegion(String name) {
@@ -32,7 +30,7 @@ public class PokemonService {
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
     }
 
-    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers) {
+    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<EvolutionLine> evolutionChain) {
         return new PokemonDto(
                 pokemon.id(),
                 pokemon.speciesId(),
@@ -58,7 +56,18 @@ public class PokemonService {
                         .toArray(PokemonDto.DexEntryDto[]::new),
                 dexNumbers.stream()
                         .map(dex -> new PokemonDto.DexNumberDto(dex.region().getName(), dex.dexNumber()))
-                        .toArray(PokemonDto.DexNumberDto[]::new)
+                        .toArray(PokemonDto.DexNumberDto[]::new),
+                evolutionChain.stream()
+                        .map(line -> new PokemonDto.EvolutionLineDto(
+                                line.id(),
+                                line.fromPokemon(),
+                                line.fromDisplay(),
+                                line.toPokemon(),
+                                line.toDisplay(),
+                                line.details(),
+                                line.region(),
+                                line.altForm()
+                        ) ).toArray(PokemonDto.EvolutionLineDto[]::new)
         );
     }
 

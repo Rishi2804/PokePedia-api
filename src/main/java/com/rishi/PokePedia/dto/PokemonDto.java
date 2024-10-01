@@ -1,5 +1,4 @@
 package com.rishi.PokePedia.dto;
-
 public record PokemonDto(
         Integer id,
         Integer speciesId,
@@ -13,7 +12,8 @@ public record PokemonDto(
         StatsDto stats,
         String[] forms,
         DexEntryDto[] dexEntries,
-        DexNumberDto[] dexNumbers
+        DexNumberDto[] dexNumbers,
+        EvolutionLineDto[] evolutionChain
 
 ) {
     public record StatsDto(
@@ -27,4 +27,14 @@ public record PokemonDto(
     ) {}
     public record DexEntryDto(String game, String entry) {}
     public record DexNumberDto(String dexName, Integer dexNumber) {}
+    public record EvolutionLineDto(
+            Integer id,
+            Integer fromPokemon,
+            String fromDisplay,
+            Integer toPokemon,
+            String toDisplay,
+            String[] details,
+            String region,
+            Integer altForm
+    ){}
 }
