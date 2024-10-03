@@ -53,6 +53,14 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
+    public List<PokemonAbility> getAbilitiesOfPokemon(Integer id) {
+        String sql = "SELECT a.name, d.* FROM abilitydetails d " +
+                "JOIN ability a ON a.id = d.ability_id " +
+                "WHERE d.pokemon_id = ?";
+        return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokemonAbilityMapper, id);
+    }
+
+    @Override
     public List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         if (pokedexRegion == PokedexRegion.NATIONAL) {
             String sql = "SELECT s.id AS num, p.id, s.name, p.type1, p.type2 FROM pokemon p " +
@@ -165,6 +173,18 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 LearnMethod.fromName(rs.getString("method")),
                 rs.getInt("level_learned"),
                 VersionGroup.fromName(rs.getString("version"))
+        );
+    }
+
+    private static PokemonAbility pokemonAbilityMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        Integer gen = rs.getInt("gen");
+        gen = rs.wasNull() ? null : gen;
+
+        return new PokemonAbility(
+                rs.getInt("ability_id"),
+                rs.getString("name"),
+                rs.getBoolean("hidden"),
+                gen
         );
     }
 }

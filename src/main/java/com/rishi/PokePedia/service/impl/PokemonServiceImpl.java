@@ -24,7 +24,8 @@ public class PokemonServiceImpl implements PokemonService {
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
         List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
         List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id);
-        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves));
+        List<PokemonAbility> pokemonAbilities = pokemonRepository.getAbilitiesOfPokemon(id);
+        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves, pokemonAbilities));
     }
 
     @Override
@@ -33,7 +34,7 @@ public class PokemonServiceImpl implements PokemonService {
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
     }
 
-    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<EvolutionLine> evolutionChain, List<PokemonMoveDetails> pokemonMoves) {
+    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<EvolutionLine> evolutionChain, List<PokemonMoveDetails> pokemonMoves, List<PokemonAbility> abilities) {
         List<PokemonDto.MovesetDto> moveset = mapToMovesetDtoHelper(pokemonMoves);
         return new PokemonDto(
                 pokemon.id(),
@@ -42,6 +43,12 @@ public class PokemonServiceImpl implements PokemonService {
                 pokemon.gen(),
                 pokemon.type1().getName(),
                 pokemon.type2() == null ? null : pokemon.type2().getName(),
+                abilities.stream().map(ability -> new PokemonDto.AbilityDto(
+                        ability.abilityId(),
+                        ability.abilityName(),
+                        ability.isHidden(),
+                        ability.genRemoved()
+                )).toArray(PokemonDto.AbilityDto[]::new),
                 pokemon.weight(),
                 pokemon.height(),
                 pokemon.genderRate(),

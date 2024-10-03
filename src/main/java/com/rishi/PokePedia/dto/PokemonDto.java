@@ -6,6 +6,7 @@ public record PokemonDto(
         Integer gen,
         String type1,
         String type2,
+        AbilityDto[] abilities,
         Float weight,
         Float height,
         Integer genderRate,
@@ -24,6 +25,12 @@ public record PokemonDto(
             Integer spdef,
             Integer speed,
             Integer bst
+    ) {}
+    public record AbilityDto (
+            Integer abilityId,
+            String abilityName,
+            Boolean isHidden,
+            Integer genRemoved
     ) {}
     public record DexEntryDto(String game, String entry) {}
     public record DexNumberDto(String dexName, Integer dexNumber) {}
