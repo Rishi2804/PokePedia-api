@@ -47,6 +47,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
+    public List<PokemonMoveDetails> getMovesOfPokemon(Integer id) {
+        String sql = "SELECT * FROM get_pokemon_moves(?)";
+        return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokemonMovesMapper, id);
+    }
+
+    @Override
     public List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         if (pokedexRegion == PokedexRegion.NATIONAL) {
             String sql = "SELECT s.id AS num, p.id, s.name, p.type1, p.type2 FROM pokemon p " +
@@ -136,6 +142,29 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 (String[]) rs.getArray("details").getArray(),
                 rs.getString("region"),
                 rs.getInt("alt_form")
+        );
+    }
+
+    private static PokemonMoveDetails pokemonMovesMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        Integer power = rs.getInt("power");
+        power = rs.wasNull() ? null : power;
+
+        Integer accuracy = rs.getInt("accuracy");
+        accuracy = rs.wasNull() ? null : accuracy;
+
+        Integer pp = rs.getInt("pp");
+        pp = rs.wasNull() ? null : pp;
+
+        return new PokemonMoveDetails(
+                rs.getInt("move_id"),
+                rs.getString("name"),
+                MoveClass.fromString(rs.getString("class")),
+                power,
+                accuracy,
+                pp,
+                LearnMethod.fromName(rs.getString("method")),
+                rs.getInt("level_learned"),
+                VersionGroup.fromName(rs.getString("version"))
         );
     }
 }

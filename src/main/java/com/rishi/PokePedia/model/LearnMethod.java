@@ -1,10 +1,12 @@
 package com.rishi.PokePedia.model;
 
+import java.util.Comparator;
+
 public enum LearnMethod {
     LEVEL_UP("level-up"),
     MACHINE("machine"),
-    EGG("egg"),
     TUTOR("tutor"),
+    EGG("egg"),
     LIGHT_BALL_EGG("light-ball-egg"),
     FORM_CHANGE("form-change"),
     ZYGARDE_CUBE("zygarde-cube");
@@ -26,4 +28,6 @@ public enum LearnMethod {
         }
         throw new IllegalArgumentException("No LearnMethod with name " + name + " found");
     }
+
+    public static final Comparator<LearnMethod> ORDER = Comparator.comparingInt(Enum::ordinal);
 }

@@ -7,9 +7,8 @@ import com.rishi.PokePedia.repository.PokemonRepository;
 import com.rishi.PokePedia.service.PokemonService;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PokemonServiceImpl implements PokemonService {
@@ -24,7 +23,8 @@ public class PokemonServiceImpl implements PokemonService {
         Optional<Pokemon> pokemon = pokemonRepository.getPokemonById(id);
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
         List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
-        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain));
+        List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id);
+        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves));
     }
 
     @Override
@@ -33,7 +33,8 @@ public class PokemonServiceImpl implements PokemonService {
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
     }
 
-    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<EvolutionLine> evolutionChain) {
+    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<EvolutionLine> evolutionChain, List<PokemonMoveDetails> pokemonMoves) {
+        List<PokemonDto.MovesetDto> moveset = mapToMovesetDtoHelper(pokemonMoves);
         return new PokemonDto(
                 pokemon.id(),
                 pokemon.speciesId(),
@@ -70,8 +71,47 @@ public class PokemonServiceImpl implements PokemonService {
                                 line.details(),
                                 line.region(),
                                 line.altForm()
-                        ) ).toArray(PokemonDto.EvolutionLineDto[]::new)
+                        )).toArray(PokemonDto.EvolutionLineDto[]::new),
+                moveset.toArray(PokemonDto.MovesetDto[]::new)
         );
+    }
+
+    private List<PokemonDto.MovesetDto> mapToMovesetDtoHelper(List<PokemonMoveDetails> items) {
+        items.sort(Comparator.comparing(PokemonMoveDetails::learnMethod));
+
+        Map<VersionGroup, List<PokemonMoveDetails>> groupedByVersion = items.stream()
+                .collect(Collectors.groupingBy(PokemonMoveDetails::versionGroup));
+
+        return groupedByVersion.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey(VersionGroup.ORDER))
+                .map(entry -> {
+                    VersionGroup versionGroup = entry.getKey();
+                    List<PokemonMoveDetails> versionMoves = entry.getValue();
+
+                    Map<LearnMethod, List<PokemonMoveDetails>> groupedByMethod = versionMoves.stream()
+                            .collect(Collectors.groupingBy(PokemonMoveDetails::learnMethod));
+
+                    PokemonDto.MovesetDto.LearnMethodSets[] learnMethodSets = groupedByMethod.entrySet().stream()
+                            .sorted(Map.Entry.comparingByKey(LearnMethod.ORDER))
+                            .map(methodEntry -> {
+                                LearnMethod learnMethod = methodEntry.getKey();
+                                List<PokemonMoveDetails> methodMoves = methodEntry.getValue();
+                                PokemonDto.MovesetDto.LearnMethodSets.Move[] moves = methodMoves.stream()
+                                        .map(move -> new PokemonDto.MovesetDto.LearnMethodSets.Move(
+                                                move.name(),
+                                                move.moveClass().name().toLowerCase(),
+                                                move.movePower(),
+                                                move.moveAccuracy(),
+                                                move.movePP(),
+                                                move.levelLearned()
+                                        ))
+                                        .toArray(PokemonDto.MovesetDto.LearnMethodSets.Move[]::new);
+
+                                return new PokemonDto.MovesetDto.LearnMethodSets(learnMethod.getName(), moves);
+                            }).toArray(PokemonDto.MovesetDto.LearnMethodSets[]::new);
+
+                    return new PokemonDto.MovesetDto(versionGroup.getVersionName(), learnMethodSets);
+                }).collect(Collectors.toList());
     }
 
     private List<PokemonDexSnapDto> mapToPokedexDto(List<PokemonDexSnap> dexByRegion) {

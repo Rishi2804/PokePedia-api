@@ -5,12 +5,12 @@ public enum MoveClass {
     SPECIAL,
     STATUS;
 
-    public static Type fromString(String typeName) {
+    public static MoveClass fromString(String typeName) {
         if (typeName == null) {
             throw new IllegalArgumentException("Type name cannot be null");
         }
         try {
-            return Type.valueOf(typeName.toUpperCase());
+            return MoveClass.valueOf(typeName.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid Type name: " + typeName);
         }

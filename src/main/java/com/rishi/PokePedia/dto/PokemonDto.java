@@ -13,8 +13,8 @@ public record PokemonDto(
         String[] forms,
         DexEntryDto[] dexEntries,
         DexNumberDto[] dexNumbers,
-        EvolutionLineDto[] evolutionChain
-
+        EvolutionLineDto[] evolutionChain,
+        MovesetDto[] moveset
 ) {
     public record StatsDto(
             Integer hp,
@@ -37,4 +37,44 @@ public record PokemonDto(
             String region,
             Integer altForm
     ){}
+
+    public record MovesetDto (
+        String versionGroup,
+        LearnMethodSets[] learnMethodSets
+    ){
+        public record LearnMethodSets(
+                String method,
+                Move[] moves
+        ){
+            public record Move(
+                    String name,
+                    String moveClass,
+                    Integer power,
+                    Integer accuracy,
+                    Integer pp,
+                    Integer levelLearned
+            ){}
+        }
+    }
 }
+
+/*
+movesets: [
+    versionGroup: String,
+    methods: [
+        {
+            method: String,
+            moves: [
+                {
+                    name: String,
+                    class: String
+                    move: int or null,
+                    accuracy: int or null,
+                    pp: int or null,
+                    levelLearned: int,
+                }
+            ]
+        }
+    ]
+]
+ */

@@ -10,6 +10,7 @@ public interface PokemonRepository {
     Optional<Pokemon> getPokemonById(Integer id);
     List<DexNumbers> getDexNumbersFromPokemon(Integer id);
     List<EvolutionLine> getEvolutionChainOfPokemon(Integer id);
+    List<PokemonMoveDetails> getMovesOfPokemon(Integer id);
 
     // Pokedex List
     List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion);
