@@ -64,24 +64,3 @@ public record PokemonDto(
         }
     }
 }
-
-/*
-movesets: [
-    versionGroup: String,
-    methods: [
-        {
-            method: String,
-            moves: [
-                {
-                    name: String,
-                    class: String
-                    move: int or null,
-                    accuracy: int or null,
-                    pp: int or null,
-                    levelLearned: int,
-                }
-            ]
-        }
-    ]
-]
- */
