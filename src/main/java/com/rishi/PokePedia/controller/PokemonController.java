@@ -21,11 +21,6 @@ public class PokemonController {
         this.pokemonService = pokemonService;
     }
 
-    @GetMapping("/health")
-    public String getHealthCheck() {
-        return "API functional";
-    }
-
     @GetMapping("/pokemon/{id:\\d+}")
     public PokemonDto getPokemon(@PathVariable Integer id) {
         return pokemonService.getPokemonById(id)

@@ -1,0 +1,15 @@
+package com.rishi.PokePedia.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/vi")
+public class HomeController {
+
+    @GetMapping("/health")
+    public String getHealthCheck() {
+        return "API functional";
+    }
+}
