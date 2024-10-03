@@ -35,6 +35,16 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
+    public Optional<Pokemon> getPokemonByName(String name) {
+        String sql = "SELECT * FROM pokemon WHERE name = ?";
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, PokemonRepositoryImpl::pokemonRowMapper, name));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<DexNumbers> getDexNumbersFromPokemon(Integer id) {
         String sql = "SELECT * FROM dexnumber WHERE default_variate = ? OR alt_variates @> ARRAY[?]";
         return jdbcTemplate.query(sql, PokemonRepositoryImpl::dexNumberRowMapper, id, id);

@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface PokemonService {
     Optional<PokemonDto> getPokemonById(Integer id);
+    Optional<PokemonDto> getPokemonByName(String name);
     List<PokemonDexSnapDto> getDexByRegion(String name);
 }

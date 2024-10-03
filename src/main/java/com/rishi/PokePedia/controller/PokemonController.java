@@ -26,10 +26,17 @@ public class PokemonController {
         return "API functional";
     }
 
-    @GetMapping("/pokemon/{id}")
+    @GetMapping("/pokemon/{id:\\d+}")
     public PokemonDto getPokemon(@PathVariable Integer id) {
         return pokemonService.getPokemonById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No pokemon exists of id " + id));
+    }
+
+    @GetMapping("/pokemon/{name:[a-zA-Z\\-]+}")
+    public PokemonDto getPokemon(@PathVariable String name) {
+        return pokemonService.getPokemonByName(name)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "No pokemon exists of name " + name));
     }
 
     @GetMapping("/pokedex/{name}")

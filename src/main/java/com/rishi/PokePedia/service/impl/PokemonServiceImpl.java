@@ -29,6 +29,19 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    public Optional<PokemonDto> getPokemonByName(String name) {
+        Optional<Pokemon> pokemon = pokemonRepository.getPokemonByName(name);
+        return pokemon.map(value -> {
+            Integer id = value.id();
+            List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
+            List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
+            List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id);
+            List<PokemonAbility> pokemonAbilities = pokemonRepository.getAbilitiesOfPokemon(id);
+            return mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves, pokemonAbilities);
+        });
+    }
+
+    @Override
     public List<PokemonDexSnapDto> getDexByRegion(String name) {
         PokedexRegion region = PokedexRegion.fromName(name);
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
