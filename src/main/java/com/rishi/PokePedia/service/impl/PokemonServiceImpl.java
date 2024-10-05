@@ -2,6 +2,7 @@ package com.rishi.PokePedia.service.impl;
 
 import com.rishi.PokePedia.dto.PokemonDexSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
+import com.rishi.PokePedia.dto.SpeciesDto;
 import com.rishi.PokePedia.model.*;
 import com.rishi.PokePedia.repository.PokemonRepository;
 import com.rishi.PokePedia.service.PokemonService;
@@ -38,6 +39,28 @@ public class PokemonServiceImpl implements PokemonService {
             List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id);
             List<PokemonAbility> pokemonAbilities = pokemonRepository.getAbilitiesOfPokemon(id);
             return mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves, pokemonAbilities);
+        });
+    }
+
+    @Override
+    public Optional<SpeciesDto> getPokemonFromSpeciesId(Integer id) {
+        Optional<String> name = pokemonRepository.getSpeciesName(id);
+        return name.map(val -> {
+            List<Integer> pokemonIds = pokemonRepository.getPokemonIdsFromSpeciesId(id);
+            List<PokemonDto> pokemonDtos = new ArrayList<>();
+            for (Integer pid : pokemonIds) pokemonDtos.add(getPokemonById(pid).get());
+            return new SpeciesDto(id, val, pokemonDtos);
+        });
+    }
+
+    @Override
+    public Optional<SpeciesDto> getPokemonFromSpeciesName(String name) {
+        Optional<Integer> id = pokemonRepository.getSpeciesId(name);
+        return id.map(val -> {
+            List<Integer> pokemonIds = pokemonRepository.getPokemonIdsFromSpeciesId(val);
+            List<PokemonDto> pokemonDtos = new ArrayList<>();
+            for (Integer pid : pokemonIds) pokemonDtos.add(getPokemonById(pid).get());
+            return new SpeciesDto(val, name, pokemonDtos);
         });
     }
 

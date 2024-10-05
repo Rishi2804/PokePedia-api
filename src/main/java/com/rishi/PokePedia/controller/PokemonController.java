@@ -2,6 +2,7 @@ package com.rishi.PokePedia.controller;
 
 import com.rishi.PokePedia.dto.PokemonDexSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
+import com.rishi.PokePedia.dto.SpeciesDto;
 import com.rishi.PokePedia.service.PokemonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,20 @@ public class PokemonController {
         return pokemonService.getPokemonByName(name)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "No pokemon exists of name " + name));
+    }
+
+    @GetMapping("/species/{id:\\d+}")
+    public SpeciesDto getSpeciesList(@PathVariable Integer id) {
+        return pokemonService.getPokemonFromSpeciesId(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "No species exists of id " + id));
+    }
+
+    @GetMapping("/species/{name:[a-zA-Z\\-]+}")
+    public SpeciesDto getSpeciesList(@PathVariable String name) {
+        return pokemonService.getPokemonFromSpeciesName(name)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "No species exists of name " + name));
     }
 
     @GetMapping("/pokedex/{name}")
