@@ -44,6 +44,7 @@ public class MoveServiceImpl implements MoveService {
         return new MoveDto(
                 move.id(),
                 move.name(),
+                move.gen(),
                 move.moveClass().toString(),
                 move.movePower(),
                 move.moveAccuracy(),

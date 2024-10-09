@@ -8,6 +8,7 @@ import java.util.List;
 public record Move (
         Integer id,
         String name,
+        Integer gen,
         MoveClass moveClass,
         Integer movePower,
         Integer moveAccuracy,
