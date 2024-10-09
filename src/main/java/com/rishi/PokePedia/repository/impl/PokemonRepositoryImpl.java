@@ -1,5 +1,7 @@
 package com.rishi.PokePedia.repository.impl;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rishi.PokePedia.model.*;
@@ -137,6 +139,8 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 dexEntries[i] = null;
             }
         }
+
+        Arrays.sort(dexEntries, Comparator.comparing(Pokemon.DexEntry::game, Game.ORDER));
 
         return new Pokemon(
                 rs.getInt("id"),
