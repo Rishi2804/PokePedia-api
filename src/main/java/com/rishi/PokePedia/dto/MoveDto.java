@@ -1,0 +1,26 @@
+package com.rishi.PokePedia.dto;
+
+import java.util.List;
+
+public record MoveDto(
+        Integer id,
+        String name,
+        String moveClass,
+        Integer movePower,
+        Integer moveAccuracy,
+        Integer movePP,
+        List<Description> descriptions,
+        List<Pokemon> pokemon
+) {
+    public record Description(
+            String[] versionGroups,
+            String description
+    ){}
+
+    public record Pokemon (
+            Integer id,
+            String name,
+            String type1,
+            String type2
+    ){}
+}
