@@ -1,9 +1,12 @@
 package com.rishi.PokePedia.service.impl;
 
-import com.rishi.PokePedia.dto.PokemonDexSnapDto;
+import com.rishi.PokePedia.dto.PokemonSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
 import com.rishi.PokePedia.dto.SpeciesDto;
 import com.rishi.PokePedia.model.*;
+import com.rishi.PokePedia.model.enums.LearnMethod;
+import com.rishi.PokePedia.model.enums.PokedexRegion;
+import com.rishi.PokePedia.model.enums.VersionGroup;
 import com.rishi.PokePedia.repository.PokemonRepository;
 import com.rishi.PokePedia.service.PokemonService;
 import org.springframework.stereotype.Service;
@@ -65,7 +68,7 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
-    public List<PokemonDexSnapDto> getDexByRegion(String name) {
+    public List<PokemonSnapDto> getDexByRegion(String name) {
         PokedexRegion region = PokedexRegion.fromName(name);
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
     }
@@ -157,8 +160,8 @@ public class PokemonServiceImpl implements PokemonService {
                 }).collect(Collectors.toList());
     }
 
-    private List<PokemonDexSnapDto> mapToPokedexDto(List<PokemonDexSnap> dexByRegion) {
-        return dexByRegion.stream().map(entry -> new PokemonDexSnapDto(
+    private List<PokemonSnapDto> mapToPokedexDto(List<PokemonSnap> dexByRegion) {
+        return dexByRegion.stream().map(entry -> new PokemonSnapDto(
                 entry.dexNumber(),
                 entry.id(),
                 entry.name(),

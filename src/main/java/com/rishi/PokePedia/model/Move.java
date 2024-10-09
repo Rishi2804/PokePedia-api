@@ -1,5 +1,8 @@
 package com.rishi.PokePedia.model;
 
+import com.rishi.PokePedia.model.enums.MoveClass;
+import com.rishi.PokePedia.model.enums.VersionGroup;
+
 import java.util.List;
 
 public record Move (

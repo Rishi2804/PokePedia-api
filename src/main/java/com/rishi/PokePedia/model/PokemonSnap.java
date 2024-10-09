@@ -1,6 +1,8 @@
 package com.rishi.PokePedia.model;
 
-public record PokemonDexSnap(
+import com.rishi.PokePedia.model.enums.Type;
+
+public record PokemonSnap(
         Integer dexNumber,
         Integer id,
         String name,

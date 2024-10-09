@@ -1,6 +1,6 @@
 package com.rishi.PokePedia.service;
 
-import com.rishi.PokePedia.dto.PokemonDexSnapDto;
+import com.rishi.PokePedia.dto.PokemonSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
 import com.rishi.PokePedia.dto.SpeciesDto;
 
@@ -12,5 +12,5 @@ public interface PokemonService {
     Optional<PokemonDto> getPokemonByName(String name);
     Optional<SpeciesDto> getPokemonFromSpeciesId(Integer id);
     Optional<SpeciesDto> getPokemonFromSpeciesName(String name);
-    List<PokemonDexSnapDto> getDexByRegion(String name);
+    List<PokemonSnapDto> getDexByRegion(String name);
 }

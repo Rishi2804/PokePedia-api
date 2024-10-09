@@ -1,6 +1,6 @@
 package com.rishi.PokePedia.controller;
 
-import com.rishi.PokePedia.dto.PokemonDexSnapDto;
+import com.rishi.PokePedia.dto.PokemonSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
 import com.rishi.PokePedia.dto.SpeciesDto;
 import com.rishi.PokePedia.service.PokemonService;
@@ -50,7 +50,7 @@ public class PokemonController {
     }
 
     @GetMapping("/pokedex/{name}")
-    public List<PokemonDexSnapDto> getDex(@PathVariable String name) {
+    public List<PokemonSnapDto> getDex(@PathVariable String name) {
         try {
             return pokemonService.getDexByRegion(name);
         } catch (IllegalArgumentException e) {

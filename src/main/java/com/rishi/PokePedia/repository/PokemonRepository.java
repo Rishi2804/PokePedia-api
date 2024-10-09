@@ -1,6 +1,7 @@
 package com.rishi.PokePedia.repository;
 
 import com.rishi.PokePedia.model.*;
+import com.rishi.PokePedia.model.enums.PokedexRegion;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,5 +19,5 @@ public interface PokemonRepository {
     List<Integer> getPokemonIdsFromSpeciesId(Integer id);
 
     // Pokedex List
-    List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion);
+    List<PokemonSnap> getDexByRegion(PokedexRegion pokedexRegion);
 }

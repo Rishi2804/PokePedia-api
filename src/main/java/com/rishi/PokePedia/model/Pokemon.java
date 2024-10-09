@@ -1,5 +1,6 @@
 package com.rishi.PokePedia.model;
 
+import com.rishi.PokePedia.model.enums.Type;
 import jakarta.persistence.Id;
 
 public record Pokemon(

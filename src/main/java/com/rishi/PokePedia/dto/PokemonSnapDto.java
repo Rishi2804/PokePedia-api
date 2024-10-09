@@ -1,6 +1,6 @@
 package com.rishi.PokePedia.dto;
 
-public record PokemonDexSnapDto(
+public record PokemonSnapDto(
         Integer dexNumber,
         Integer pokemonId,
         String name,

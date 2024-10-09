@@ -3,6 +3,7 @@ package com.rishi.PokePedia.repository.impl;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rishi.PokePedia.model.*;
+import com.rishi.PokePedia.model.enums.*;
 import com.rishi.PokePedia.repository.PokemonRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -97,7 +98,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
-    public List<PokemonDexSnap> getDexByRegion(PokedexRegion pokedexRegion) {
+    public List<PokemonSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         if (pokedexRegion == PokedexRegion.NATIONAL) {
             String sql = "SELECT s.id AS num, p.id, s.name, p.type1, p.type2 FROM pokemon p " +
                     "JOIN species s ON s.id = p.species_id " +
@@ -164,10 +165,10 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         );
     }
 
-    private static PokemonDexSnap pokedexRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
+    private static PokemonSnap pokedexRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
         String type2Str = rs.getString("type2");
         Type type2 = type2Str == null ? null : Type.fromString(type2Str);
-        return new PokemonDexSnap(
+        return new PokemonSnap(
                 rs.getInt("num"),
                 rs.getInt("id"),
                 rs.getString("name"),

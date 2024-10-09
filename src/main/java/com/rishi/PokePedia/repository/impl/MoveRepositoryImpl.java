@@ -2,6 +2,9 @@ package com.rishi.PokePedia.repository.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rishi.PokePedia.model.*;
+import com.rishi.PokePedia.model.enums.MoveClass;
+import com.rishi.PokePedia.model.enums.Type;
+import com.rishi.PokePedia.model.enums.VersionGroup;
 import com.rishi.PokePedia.repository.MoveRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,7 +45,7 @@ public class MoveRepositoryImpl implements MoveRepository {
     }
 
     @Override
-    public List<PokemonDexSnap> getPokemonLearnable(Integer id) {
+    public List<PokemonSnap> getPokemonLearnable(Integer id) {
         String sql = "SELECT DISTINCT p.id, p.name, p.type1, p.type2, p.species_id FROM movedetails " +
                 "JOIN pokemon p ON p.id = pokemon_id " +
                 "WHERE move_id = ? " +
@@ -78,10 +81,10 @@ public class MoveRepositoryImpl implements MoveRepository {
         );
     }
 
-    private static PokemonDexSnap pokemonLearnableMoveMapper(ResultSet rs, Integer rowNum) throws SQLException {
+    private static PokemonSnap pokemonLearnableMoveMapper(ResultSet rs, Integer rowNum) throws SQLException {
         String type2Str = rs.getString("type2");
         Type type2 = type2Str == null ? null : Type.fromString(type2Str);
-        return new PokemonDexSnap(
+        return new PokemonSnap(
                 null,
                 rs.getInt("id"),
                 rs.getString("name"),

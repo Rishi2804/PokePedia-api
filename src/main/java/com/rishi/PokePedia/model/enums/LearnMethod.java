@@ -1,4 +1,4 @@
-package com.rishi.PokePedia.model;
+package com.rishi.PokePedia.model.enums;
 
 import java.util.Comparator;
 
