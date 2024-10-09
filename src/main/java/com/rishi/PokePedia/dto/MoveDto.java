@@ -9,9 +9,16 @@ public record MoveDto(
         Integer movePower,
         Integer moveAccuracy,
         Integer movePP,
+        List<PastMoveValues> pastMoveValues,
         List<Description> descriptions,
         List<Pokemon> pokemon
 ) {
+    public record PastMoveValues (
+            Integer movePower,
+            Integer moveAccuracy,
+            Integer movePP,
+            String[] versionGroups
+    ){}
     public record Description(
             String[] versionGroups,
             String description

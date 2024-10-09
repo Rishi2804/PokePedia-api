@@ -2,6 +2,7 @@ package com.rishi.PokePedia.service.impl;
 
 import com.rishi.PokePedia.dto.MoveDto;
 import com.rishi.PokePedia.model.Move;
+import com.rishi.PokePedia.model.PastMoveValues;
 import com.rishi.PokePedia.model.PokemonSnap;
 import com.rishi.PokePedia.repository.MoveRepository;
 import com.rishi.PokePedia.service.MoveService;
@@ -24,7 +25,8 @@ public class MoveServiceImpl implements MoveService {
         Optional<Move> move = moveRepository.getMoveById(id);
         return move.map(val -> {
             List<PokemonSnap> pokemon = moveRepository.getPokemonLearnable(id);
-            return mapToMoveDto(val, pokemon);
+            List<PastMoveValues> pastValues = moveRepository.getPastValues(id);
+            return mapToMoveDto(val, pokemon, pastValues);
         });
     }
 
@@ -33,11 +35,12 @@ public class MoveServiceImpl implements MoveService {
         Optional<Move> move = moveRepository.getMoveByName(name);
         return move.map(val -> {
             List<PokemonSnap> pokemon = moveRepository.getPokemonLearnable(val.id());
-            return mapToMoveDto(val, pokemon);
+            List<PastMoveValues> pastValues = moveRepository.getPastValues(val.id());
+            return mapToMoveDto(val, pokemon, pastValues);
         });
     }
 
-    private MoveDto mapToMoveDto(Move move, List<PokemonSnap> pokemon) {
+    private MoveDto mapToMoveDto(Move move, List<PokemonSnap> pokemon, List<PastMoveValues> pastMoveValues) {
         return new MoveDto(
                 move.id(),
                 move.name(),
@@ -45,6 +48,12 @@ public class MoveServiceImpl implements MoveService {
                 move.movePower(),
                 move.moveAccuracy(),
                 move.movePP(),
+                pastMoveValues.stream().map(pastVal -> new MoveDto.PastMoveValues(
+                        pastVal.movePower(),
+                        pastVal.moveAccuracy(),
+                        pastVal.movePP(),
+                        Arrays.stream(pastVal.versionGroups()).map(group -> group.name()).toArray(String[]::new)
+                )).toList(),
                 move.descriptions().stream().map(val -> new MoveDto.Description(
                         Arrays.stream(val.versionGroups()).map(group -> group.name()).toArray(String[]::new),
                         val.entry()

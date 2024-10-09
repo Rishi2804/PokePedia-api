@@ -53,6 +53,12 @@ public class MoveRepositoryImpl implements MoveRepository {
         return jdbcTemplate.query(sql, MoveRepositoryImpl::pokemonLearnableMoveMapper, id);
     }
 
+    @Override
+    public List<PastMoveValues> getPastValues(Integer id) {
+        String sql = "SELECT * FROM pastmovevalues WHERE id = ?";
+        return jdbcTemplate.query(sql, MoveRepositoryImpl::pastMoveValueMapper, id);
+    }
+
 
     private static Move moveRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
         String[] descriptionsJsonStrs = (String[]) rs.getArray("descriptions").getArray();
@@ -90,6 +96,16 @@ public class MoveRepositoryImpl implements MoveRepository {
                 rs.getString("name"),
                 Type.fromString(rs.getString("type1")),
                 type2
+        );
+    }
+
+    private static PastMoveValues pastMoveValueMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        return new PastMoveValues(
+                rs.getInt("power"),
+                rs.getInt("accuracy"),
+                rs.getInt("pp"),
+                Arrays.stream(((String[]) rs.getArray("version_groups").getArray()))
+                        .map(group -> VersionGroup.fromName(group)).toArray(VersionGroup[]::new)
         );
     }
 }
