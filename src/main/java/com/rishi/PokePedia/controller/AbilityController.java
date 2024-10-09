@@ -1,7 +1,6 @@
 package com.rishi.PokePedia.controller;
 
 import com.rishi.PokePedia.dto.AbilityDto;
-import com.rishi.PokePedia.dto.MoveDto;
 import com.rishi.PokePedia.service.AbilityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
