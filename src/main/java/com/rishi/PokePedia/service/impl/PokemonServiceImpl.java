@@ -102,10 +102,10 @@ public class PokemonServiceImpl implements PokemonService {
                 ),
                 pokemon.forms(),
                 Arrays.stream(pokemon.dexEntries())
-                        .map(dexEntry -> new PokemonDto.DexEntryDto(dexEntry.game(), dexEntry.entry()))
+                        .map(dexEntry -> new PokemonDto.DexEntryDto(dexEntry.game().name(), dexEntry.entry()))
                         .toArray(PokemonDto.DexEntryDto[]::new),
                 dexNumbers.stream()
-                        .map(dex -> new PokemonDto.DexNumberDto(dex.region().getName(), dex.dexNumber()))
+                        .map(dex -> new PokemonDto.DexNumberDto(dex.region().name(), dex.dexNumber()))
                         .toArray(PokemonDto.DexNumberDto[]::new),
                 evolutionChain.stream()
                         .map(line -> new PokemonDto.EvolutionLineDto(

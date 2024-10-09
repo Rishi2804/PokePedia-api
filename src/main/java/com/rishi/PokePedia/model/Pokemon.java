@@ -1,5 +1,6 @@
 package com.rishi.PokePedia.model;
 
+import com.rishi.PokePedia.model.enums.Game;
 import com.rishi.PokePedia.model.enums.Type;
 import jakarta.persistence.Id;
 
@@ -25,5 +26,5 @@ public record Pokemon(
         DexEntry[] dexEntries
 
 ) {
-    public record DexEntry(String game, String entry) {}
+    public record DexEntry(Game game, String entry) {}
 }
