@@ -2,10 +2,8 @@ package com.rishi.PokePedia.model;
 
 import com.rishi.PokePedia.model.enums.Game;
 import com.rishi.PokePedia.model.enums.Type;
-import jakarta.persistence.Id;
 
 public record Pokemon(
-        @Id
         Integer id,
         Integer speciesId,
         String name,
