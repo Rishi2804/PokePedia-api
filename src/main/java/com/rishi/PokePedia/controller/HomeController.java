@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 public class HomeController {
 
-    @GetMapping("/health")
-    public String getHealthCheck() {
-        return "API functional";
+    @GetMapping("/home")
+    public String getMessage() {
+        return "Welcome to the PokePedia API!";
     }
 }

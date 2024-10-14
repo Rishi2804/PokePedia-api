@@ -10,7 +10,7 @@ public class PokePediaApplication {
 
         SpringApplication.run(PokePediaApplication.class, args);
 
-        System.out.println("Hello World");
+        System.out.println("API is up");
     }
 
 }
