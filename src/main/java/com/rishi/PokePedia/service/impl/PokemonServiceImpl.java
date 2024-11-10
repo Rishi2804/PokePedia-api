@@ -80,8 +80,8 @@ public class PokemonServiceImpl implements PokemonService {
                 pokemon.speciesId(),
                 pokemon.name(),
                 pokemon.gen(),
-                pokemon.type1().getName(),
-                pokemon.type2() == null ? null : pokemon.type2().getName(),
+                pokemon.type1().name(),
+                pokemon.type2() == null ? null : pokemon.type2().name(),
                 abilities.stream().map(ability -> new PokemonDto.AbilityDto(
                         ability.abilityId(),
                         ability.abilityName(),
@@ -153,10 +153,10 @@ public class PokemonServiceImpl implements PokemonService {
                                         ))
                                         .toArray(PokemonDto.MovesetDto.LearnMethodSets.Move[]::new);
 
-                                return new PokemonDto.MovesetDto.LearnMethodSets(learnMethod.getName(), moves);
+                                return new PokemonDto.MovesetDto.LearnMethodSets(learnMethod.name(), moves);
                             }).toArray(PokemonDto.MovesetDto.LearnMethodSets[]::new);
 
-                    return new PokemonDto.MovesetDto(versionGroup.getVersionName(), learnMethodSets);
+                    return new PokemonDto.MovesetDto(versionGroup.name(), learnMethodSets);
                 }).collect(Collectors.toList());
     }
 
@@ -165,8 +165,8 @@ public class PokemonServiceImpl implements PokemonService {
                 entry.dexNumber(),
                 entry.id(),
                 entry.name(),
-                entry.type1().getName(),
-                entry.type2() == null ? null : entry.type2().getName()
+                entry.type1().name(),
+                entry.type2() == null ? null : entry.type2().name()
         )).toList();
     }
 }
