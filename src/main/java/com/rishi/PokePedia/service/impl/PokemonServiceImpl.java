@@ -145,6 +145,7 @@ public class PokemonServiceImpl implements PokemonService {
                                 PokemonDto.MovesetDto.LearnMethodSets.Move[] moves = methodMoves.stream()
                                         .map(move -> new PokemonDto.MovesetDto.LearnMethodSets.Move(
                                                 move.name(),
+                                                move.type().name(),
                                                 move.moveClass().name().toLowerCase(),
                                                 move.movePower(),
                                                 move.moveAccuracy(),

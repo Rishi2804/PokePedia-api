@@ -209,6 +209,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         return new PokemonMoveDetails(
                 rs.getInt("move_id"),
                 rs.getString("name"),
+                Type.fromString(rs.getString("type")),
                 MoveClass.fromString(rs.getString("class")),
                 power,
                 accuracy,

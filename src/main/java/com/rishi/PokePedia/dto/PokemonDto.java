@@ -55,6 +55,7 @@ public record PokemonDto(
         ){
             public record Move(
                     String name,
+                    String type,
                     String moveClass,
                     Integer power,
                     Integer accuracy,

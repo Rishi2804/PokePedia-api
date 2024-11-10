@@ -5,6 +5,7 @@ import java.util.List;
 public record MoveDto(
         Integer id,
         String name,
+        String type,
         Integer gen,
         String moveClass,
         Integer movePower,

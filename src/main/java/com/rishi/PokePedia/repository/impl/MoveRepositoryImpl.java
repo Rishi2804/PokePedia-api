@@ -79,6 +79,7 @@ public class MoveRepositoryImpl implements MoveRepository {
         return new Move(
                 rs.getInt("id"),
                 rs.getString("name"),
+                Type.fromString(rs.getString("type")),
                 rs.getInt("gen"),
                 MoveClass.fromString(rs.getString("class")),
                 rs.getInt("power"),
