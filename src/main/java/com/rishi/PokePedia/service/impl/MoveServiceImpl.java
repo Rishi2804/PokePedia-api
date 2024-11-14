@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.rishi.PokePedia.service.utils.formatName;
+
 @Service
 public class MoveServiceImpl implements MoveService {
     private final MoveRepository moveRepository;
@@ -43,7 +45,7 @@ public class MoveServiceImpl implements MoveService {
     private MoveDto mapToMoveDto(Move move, List<PokemonSnap> pokemon, List<PastMoveValues> pastMoveValues) {
         return new MoveDto(
                 move.id(),
-                move.name(),
+                formatName(move.name(), false),
                 move.type().name(),
                 move.gen(),
                 move.moveClass().toString(),
@@ -61,7 +63,7 @@ public class MoveServiceImpl implements MoveService {
                         val.entry()
                 )).toList(),
                 pokemon.stream().map(mon -> new MoveDto.Pokemon(
-                        mon.id(), mon.name(), mon.type1().name(), mon.type2() == null ? null : mon.type2().name()
+                        mon.id(), formatName(mon.name(), true), mon.type1().name(), mon.type2() == null ? null : mon.type2().name()
                 )).toList()
         );
     }

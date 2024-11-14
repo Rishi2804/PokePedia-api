@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.rishi.PokePedia.service.utils.formatName;
+
 @Service
 public class PokemonServiceImpl implements PokemonService {
     private final PokemonRepository pokemonRepository;
@@ -78,13 +80,13 @@ public class PokemonServiceImpl implements PokemonService {
         return new PokemonDto(
                 pokemon.id(),
                 pokemon.speciesId(),
-                pokemon.name(),
+                formatName(pokemon.name(), true),
                 pokemon.gen(),
                 pokemon.type1().name(),
                 pokemon.type2() == null ? null : pokemon.type2().name(),
                 abilities.stream().map(ability -> new PokemonDto.AbilityDto(
                         ability.abilityId(),
-                        ability.abilityName(),
+                        formatName(ability.abilityName(), false),
                         ability.isHidden(),
                         ability.genRemoved()
                 )).toArray(PokemonDto.AbilityDto[]::new),
@@ -111,9 +113,9 @@ public class PokemonServiceImpl implements PokemonService {
                         .map(line -> new PokemonDto.EvolutionLineDto(
                                 line.id(),
                                 line.fromPokemon(),
-                                line.fromDisplay(),
+                                formatName(line.fromDisplay(), true),
                                 line.toPokemon(),
-                                line.toDisplay(),
+                                formatName(line.toDisplay(), true),
                                 line.details(),
                                 line.region(),
                                 line.altForm()
@@ -144,7 +146,7 @@ public class PokemonServiceImpl implements PokemonService {
                                 List<PokemonMoveDetails> methodMoves = methodEntry.getValue();
                                 PokemonDto.MovesetDto.LearnMethodSets.Move[] moves = methodMoves.stream()
                                         .map(move -> new PokemonDto.MovesetDto.LearnMethodSets.Move(
-                                                move.name(),
+                                                formatName(move.name(), false),
                                                 move.type().name(),
                                                 move.moveClass().name().toLowerCase(),
                                                 move.movePower(),
@@ -165,7 +167,7 @@ public class PokemonServiceImpl implements PokemonService {
         return dexByRegion.stream().map(entry -> new PokemonSnapDto(
                 entry.dexNumber(),
                 entry.id(),
-                entry.name(),
+                formatName(entry.name(), true),
                 entry.type1().name(),
                 entry.type2() == null ? null : entry.type2().name()
         )).toList();

@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.rishi.PokePedia.service.utils.formatName;
+
 @Service
 public class AbilityServiceImpl implements AbilityService {
 
@@ -39,14 +41,14 @@ public class AbilityServiceImpl implements AbilityService {
     private static AbilityDto mapToAbilityDto(Ability ability, List<PokemonSnap> pokemon) {
         return new AbilityDto(
                 ability.id(),
-                ability.name(),
+                formatName(ability.name(), false),
                 ability.gen(),
                 ability.descriptions().stream().map(description -> new AbilityDto.Description(
                         description.entry(),
                         Arrays.stream(description.groups()).map(group -> group.name()).toArray(String[]::new)
                 )).toList(),
                 pokemon.stream().map(mon -> new AbilityDto.Pokemon(
-                        mon.id(), mon.name(), mon.type1().name(), mon.type2() == null ? null : mon.type2().name()
+                        mon.id(), formatName(mon.name(), true), mon.type1().name(), mon.type2() == null ? null : mon.type2().name()
                 )).toList()
         );
     }
