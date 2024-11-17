@@ -166,6 +166,7 @@ public class PokemonServiceImpl implements PokemonService {
     private List<PokemonSnapDto> mapToPokedexDto(List<PokemonSnap> dexByRegion) {
         return dexByRegion.stream().map(entry -> new PokemonSnapDto(
                 entry.dexNumber(),
+                entry.speciesId(),
                 entry.id(),
                 formatName(entry.name(), true),
                 entry.type1().name(),

@@ -102,12 +102,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     @Override
     public List<PokemonSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         if (pokedexRegion == PokedexRegion.NATIONAL) {
-            String sql = "SELECT s.id AS num, p.id, s.name, p.type1, p.type2 FROM pokemon p " +
+            String sql = "SELECT s.id AS num, s.id AS sid, p.id, s.name, p.type1, p.type2 FROM pokemon p " +
                     "JOIN species s ON s.id = p.species_id " +
                     "ORDER BY s.id, p.id ASC";
             return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokedexRowMapper);
         } else {
-            String sql = "SELECT d.num, p.id, s.name, " +
+            String sql = "SELECT d.num, p.id, s.name, s.id AS sid, " +
                     "COALESCE(pt.type1, p.type1) AS type1, " +
                     "CASE WHEN pt.type1 IS NOT NULL THEN pt.type2 ELSE p.type2 END AS type2 " +
                     "FROM dexnumber d " +
@@ -176,6 +176,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         Type type2 = type2Str == null ? null : Type.fromString(type2Str);
         return new PokemonSnap(
                 rs.getInt("num"),
+                rs.getInt("sid"),
                 rs.getInt("id"),
                 rs.getString("name"),
                 Type.fromString(rs.getString("type1")),

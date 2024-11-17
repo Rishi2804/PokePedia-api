@@ -48,7 +48,7 @@ public class AbilityServiceImpl implements AbilityService {
                         Arrays.stream(description.groups()).map(group -> group.name()).toArray(String[]::new)
                 )).toList(),
                 pokemon.stream().map(mon -> new AbilityDto.Pokemon(
-                        mon.id(), formatName(mon.name(), true), mon.type1().name(), mon.type2() == null ? null : mon.type2().name()
+                        mon.speciesId(), mon.id(), formatName(mon.name(), true), mon.type1().name(), mon.type2() == null ? null : mon.type2().name()
                 )).toList()
         );
     }

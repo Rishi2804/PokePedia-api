@@ -4,6 +4,7 @@ import com.rishi.PokePedia.model.enums.Type;
 
 public record PokemonSnap(
         Integer dexNumber,
+        Integer speciesId,
         Integer id,
         String name,
         Type type1,

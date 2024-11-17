@@ -94,6 +94,7 @@ public class MoveRepositoryImpl implements MoveRepository {
         Type type2 = type2Str == null ? null : Type.fromString(type2Str);
         return new PokemonSnap(
                 null,
+                rs.getInt("species_id"),
                 rs.getInt("id"),
                 rs.getString("name"),
                 Type.fromString(rs.getString("type1")),
