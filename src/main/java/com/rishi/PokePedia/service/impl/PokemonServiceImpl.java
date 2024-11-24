@@ -57,7 +57,6 @@ public class PokemonServiceImpl implements PokemonService {
             if (optId.isPresent()) {
                 finalId = optId.get();
             } else {
-                finalId = id;
                 return Optional.empty();
             }
         } else {
