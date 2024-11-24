@@ -15,7 +15,7 @@ public record PokemonDto(
         DexEntryDto[] dexEntries,
         DexNumberDto[] dexNumbers,
         EvolutionLineDto[] evolutionChain,
-        MovesetDto[] moveset
+        MovesetDto[] movesets
 ) {
     public record StatsDto(
             Integer hp,
