@@ -49,12 +49,26 @@ public class PokemonServiceImpl implements PokemonService {
 
     @Override
     public Optional<SpeciesDto> getPokemonFromSpeciesId(Integer id) {
-        Optional<String> name = pokemonRepository.getSpeciesName(id);
+        Integer finalId;
+
+        if (id > 10000) {
+            Optional<Integer> optId = pokemonRepository.getSpeciesIdFromPokemon(id);
+
+            if (optId.isPresent()) {
+                finalId = optId.get();
+            } else {
+                finalId = id;
+                return Optional.empty();
+            }
+        } else {
+            finalId = id;
+        }
+        Optional<String> name = pokemonRepository.getSpeciesName(finalId);
         return name.map(val -> {
-            List<Integer> pokemonIds = pokemonRepository.getPokemonIdsFromSpeciesId(id);
+            List<Integer> pokemonIds = pokemonRepository.getPokemonIdsFromSpeciesId(finalId);
             List<PokemonDto> pokemonDtos = new ArrayList<>();
             for (Integer pid : pokemonIds) pokemonDtos.add(getPokemonById(pid).get());
-            return new SpeciesDto(id, val, pokemonDtos);
+            return new SpeciesDto(finalId, val, pokemonDtos);
         });
     }
 

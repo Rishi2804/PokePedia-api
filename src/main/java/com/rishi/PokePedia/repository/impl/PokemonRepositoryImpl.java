@@ -100,6 +100,16 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
+    public Optional<Integer> getSpeciesIdFromPokemon(Integer id) {
+        String sql = "SELECT species_id FROM pokemon WHERE id = ?";
+        try {
+            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, (ResultSet rs, int rowNum) -> rs.getInt("species_id"), id));
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
     public List<PokemonSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         if (pokedexRegion == PokedexRegion.NATIONAL) {
             String sql = "SELECT s.id AS num, s.id AS sid, p.id, s.name, p.type1, p.type2 FROM pokemon p " +

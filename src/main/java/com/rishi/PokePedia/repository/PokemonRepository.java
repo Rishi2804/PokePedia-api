@@ -17,6 +17,7 @@ public interface PokemonRepository {
     Optional<String> getSpeciesName(Integer id);
     Optional<Integer> getSpeciesId(String name);
     List<Integer> getPokemonIdsFromSpeciesId(Integer id);
+    Optional<Integer> getSpeciesIdFromPokemon(Integer id);
 
     // Pokedex List
     List<PokemonSnap> getDexByRegion(PokedexRegion pokedexRegion);
