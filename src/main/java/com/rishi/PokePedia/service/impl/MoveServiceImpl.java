@@ -1,7 +1,9 @@
 package com.rishi.PokePedia.service.impl;
 
 import com.rishi.PokePedia.dto.MoveDto;
+import com.rishi.PokePedia.dto.MoveSnapDto;
 import com.rishi.PokePedia.model.Move;
+import com.rishi.PokePedia.model.MoveSnap;
 import com.rishi.PokePedia.model.PastMoveValues;
 import com.rishi.PokePedia.model.PokemonSnap;
 import com.rishi.PokePedia.repository.MoveRepository;
@@ -23,6 +25,12 @@ public class MoveServiceImpl implements MoveService {
     }
 
     @Override
+    public List<MoveSnapDto> getMoves() {
+        List<MoveSnap> moves = moveRepository.getMoves();
+        return mapToMoveSnapDto(moves);
+    }
+
+    @Override
     public Optional<MoveDto> getMoveById(Integer id) {
         Optional<Move> move = moveRepository.getMoveById(id);
         return move.map(val -> {
@@ -40,6 +48,19 @@ public class MoveServiceImpl implements MoveService {
             List<PastMoveValues> pastValues = moveRepository.getPastValues(val.id());
             return mapToMoveDto(val, pokemon, pastValues);
         });
+    }
+
+    private List<MoveSnapDto> mapToMoveSnapDto(List<MoveSnap> moves) {
+        return moves.stream().map(move -> new MoveSnapDto(
+                move.id(),
+                formatName(move.name(), false),
+                move.type().name(),
+                move.moveClass().name(),
+                move.power(),
+                move.accuracy(),
+                move.pp(),
+                move.levelLearned()
+        )).toList();
     }
 
     private MoveDto mapToMoveDto(Move move, List<PokemonSnap> pokemon, List<PastMoveValues> pastMoveValues) {

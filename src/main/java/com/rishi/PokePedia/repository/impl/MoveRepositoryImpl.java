@@ -25,6 +25,12 @@ public class MoveRepositoryImpl implements MoveRepository {
     public MoveRepositoryImpl(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
     @Override
+    public List<MoveSnap> getMoves() {
+        String sql = "SELECT * FROM move ORDER BY id ASC";
+        return jdbcTemplate.query(sql, MoveRepositoryImpl::moveSnapRowMapper);
+    }
+
+    @Override
     public Optional<Move> getMoveById(Integer id) {
         String sql = "SELECT * FROM move WHERE id = ?";
         try {
@@ -59,6 +65,18 @@ public class MoveRepositoryImpl implements MoveRepository {
         return jdbcTemplate.query(sql, MoveRepositoryImpl::pastMoveValueMapper, id);
     }
 
+    private static MoveSnap moveSnapRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        return new MoveSnap(
+                rs.getInt("id"),
+                rs.getString("name"),
+                Type.fromString(rs.getString("type")),
+                MoveClass.fromString(rs.getString("class")),
+                rs.getInt("power"),
+                rs.getInt("accuracy"),
+                rs.getInt("pp"),
+                null
+        );
+    }
 
     private static Move moveRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
         String[] descriptionsJsonStrs = (String[]) rs.getArray("descriptions").getArray();

@@ -1,5 +1,6 @@
 package com.rishi.PokePedia.service.impl;
 
+import com.rishi.PokePedia.dto.MoveSnapDto;
 import com.rishi.PokePedia.dto.PokemonSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
 import com.rishi.PokePedia.dto.SpeciesDto;
@@ -157,17 +158,19 @@ public class PokemonServiceImpl implements PokemonService {
                             .map(methodEntry -> {
                                 LearnMethod learnMethod = methodEntry.getKey();
                                 List<PokemonMoveDetails> methodMoves = methodEntry.getValue();
-                                PokemonDto.MovesetDto.LearnMethodSets.Move[] moves = methodMoves.stream()
-                                        .map(move -> new PokemonDto.MovesetDto.LearnMethodSets.Move(
+                                MoveSnapDto[] moves = methodMoves.stream()
+                                        .map(move -> new MoveSnapDto(
+                                                move.moveId(),
                                                 formatName(move.name(), false),
                                                 move.type().name(),
-                                                move.moveClass().name().toLowerCase(),
+                                                move.moveClass().name(),
                                                 move.movePower(),
                                                 move.moveAccuracy(),
                                                 move.movePP(),
                                                 move.levelLearned()
                                         ))
-                                        .toArray(PokemonDto.MovesetDto.LearnMethodSets.Move[]::new);
+                                        .sorted(Comparator.comparingInt(MoveSnapDto::levelLearned))
+                                        .toArray(MoveSnapDto[]::new);
 
                                 return new PokemonDto.MovesetDto.LearnMethodSets(learnMethod.name(), moves);
                             }).toArray(PokemonDto.MovesetDto.LearnMethodSets[]::new);
