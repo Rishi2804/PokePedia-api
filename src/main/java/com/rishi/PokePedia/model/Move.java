@@ -15,6 +15,7 @@ public record Move (
         Integer movePower,
         Integer moveAccuracy,
         Integer movePP,
+        String effect,
         List<Description> descriptions
 ) {
     public record Description(

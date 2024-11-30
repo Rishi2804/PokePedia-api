@@ -12,6 +12,7 @@ public record MoveDto(
         Integer moveAccuracy,
         Integer movePP,
         List<PastMoveValues> pastMoveValues,
+        String effect,
         List<Description> descriptions,
         List<Pokemon> pokemon
 ) {

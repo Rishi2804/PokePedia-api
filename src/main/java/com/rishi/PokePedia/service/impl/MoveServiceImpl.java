@@ -79,6 +79,7 @@ public class MoveServiceImpl implements MoveService {
                         pastVal.movePP(),
                         Arrays.stream(pastVal.versionGroups()).map(group -> group.name()).toArray(String[]::new)
                 )).toList(),
+                move.effect(),
                 move.descriptions().stream().map(val -> new MoveDto.Description(
                         Arrays.stream(val.versionGroups()).map(group -> group.name()).toArray(String[]::new),
                         val.entry()

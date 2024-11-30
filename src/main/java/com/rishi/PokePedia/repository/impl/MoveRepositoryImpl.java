@@ -88,7 +88,7 @@ public class MoveRepositoryImpl implements MoveRepository {
                 descriptions.add(new Move.Description(
                         temp.entry(),
                         Arrays.stream(temp.versionGroup())
-                                .map(val -> VersionGroup.fromName(val)).toArray(VersionGroup[]::new))
+                                .map(VersionGroup::fromName).toArray(VersionGroup[]::new))
                 );
             } catch (Exception e) {
                 e.printStackTrace();
@@ -103,6 +103,7 @@ public class MoveRepositoryImpl implements MoveRepository {
                 rs.getInt("power"),
                 rs.getInt("accuracy"),
                 rs.getInt("pp"),
+                rs.getString("effect"),
                 descriptions
         );
     }
