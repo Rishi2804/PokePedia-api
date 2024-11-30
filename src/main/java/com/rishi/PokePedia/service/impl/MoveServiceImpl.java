@@ -59,7 +59,7 @@ public class MoveServiceImpl implements MoveService {
                 move.power(),
                 move.accuracy(),
                 move.pp(),
-                move.levelLearned()
+                move.gen()
         )).toList();
     }
 

@@ -51,7 +51,18 @@ public record PokemonDto(
     ){
         public record LearnMethodSets(
                 String method,
-                MoveSnapDto[] moves
-        ){}
+                Move[] moves
+        ){
+            public record Move(
+                    Integer id,
+                    String name,
+                    String type,
+                    String moveClass,
+                    Integer power,
+                    Integer accuracy,
+                    Integer pp,
+                    Integer levelLearned
+            ){}
+        }
     }
 }

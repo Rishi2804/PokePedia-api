@@ -11,5 +11,5 @@ public record MoveSnap (
         Integer power,
         Integer accuracy,
         Integer pp,
-        Integer levelLearned
+        Integer gen
 ){}

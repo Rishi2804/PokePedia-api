@@ -8,5 +8,5 @@ public record MoveSnapDto(
         Integer power,
         Integer accuracy,
         Integer pp,
-        Integer levelLearned
+        Integer gen
 ){}

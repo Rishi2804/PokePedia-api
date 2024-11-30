@@ -158,8 +158,8 @@ public class PokemonServiceImpl implements PokemonService {
                             .map(methodEntry -> {
                                 LearnMethod learnMethod = methodEntry.getKey();
                                 List<PokemonMoveDetails> methodMoves = methodEntry.getValue();
-                                MoveSnapDto[] moves = methodMoves.stream()
-                                        .map(move -> new MoveSnapDto(
+                                PokemonDto.MovesetDto.LearnMethodSets.Move[] moves = methodMoves.stream()
+                                        .map(move -> new PokemonDto.MovesetDto.LearnMethodSets.Move(
                                                 move.moveId(),
                                                 formatName(move.name(), false),
                                                 move.type().name(),
@@ -169,8 +169,8 @@ public class PokemonServiceImpl implements PokemonService {
                                                 move.movePP(),
                                                 move.levelLearned()
                                         ))
-                                        .sorted(Comparator.comparingInt(MoveSnapDto::levelLearned))
-                                        .toArray(MoveSnapDto[]::new);
+                                        .sorted(Comparator.comparingInt(PokemonDto.MovesetDto.LearnMethodSets.Move::levelLearned))
+                                        .toArray(PokemonDto.MovesetDto.LearnMethodSets.Move[]::new);
 
                                 return new PokemonDto.MovesetDto.LearnMethodSets(learnMethod.name(), moves);
                             }).toArray(PokemonDto.MovesetDto.LearnMethodSets[]::new);

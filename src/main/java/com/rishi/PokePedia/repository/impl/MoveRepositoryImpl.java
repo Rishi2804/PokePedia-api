@@ -26,7 +26,7 @@ public class MoveRepositoryImpl implements MoveRepository {
 
     @Override
     public List<MoveSnap> getMoves() {
-        String sql = "SELECT * FROM move ORDER BY id ASC";
+        String sql = "SELECT * FROM move ORDER BY id, gen ASC";
         return jdbcTemplate.query(sql, MoveRepositoryImpl::moveSnapRowMapper);
     }
 
@@ -74,7 +74,7 @@ public class MoveRepositoryImpl implements MoveRepository {
                 rs.getInt("power"),
                 rs.getInt("accuracy"),
                 rs.getInt("pp"),
-                null
+                rs.getInt("gen")
         );
     }
 
