@@ -14,7 +14,7 @@ public record MoveDto(
         List<PastMoveValues> pastMoveValues,
         String effect,
         List<Description> descriptions,
-        List<Pokemon> pokemon
+        List<PokemonLearnable> pokemon
 ) {
     public record PastMoveValues (
             Integer movePower,
@@ -27,11 +27,16 @@ public record MoveDto(
             String description
     ){}
 
-    public record Pokemon (
-            Integer speciesId,
-            Integer id,
-            String name,
-            String type1,
-            String type2
-    ){}
+    public record PokemonLearnable(
+            String method,
+            List<Pokemon> pokemon
+    ){
+        public record Pokemon (
+                Integer speciesId,
+                Integer id,
+                String name,
+                String type1,
+                String type2
+        ){}
+    }
 }

@@ -2,6 +2,7 @@ package com.rishi.PokePedia.repository.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rishi.PokePedia.model.*;
+import com.rishi.PokePedia.model.enums.LearnMethod;
 import com.rishi.PokePedia.model.enums.MoveClass;
 import com.rishi.PokePedia.model.enums.Type;
 import com.rishi.PokePedia.model.enums.VersionGroup;
@@ -51,8 +52,8 @@ public class MoveRepositoryImpl implements MoveRepository {
     }
 
     @Override
-    public List<PokemonSnap> getPokemonLearnable(Integer id) {
-        String sql = "SELECT DISTINCT p.id, p.name, p.type1, p.type2, p.species_id FROM movedetails " +
+    public List<MovePokemonLearnable> getPokemonLearnable(Integer id) {
+        String sql = "SELECT DISTINCT p.id, p.name, p.type1, p.type2, p.species_id, method FROM movedetails " +
                 "JOIN pokemon p ON p.id = pokemon_id " +
                 "WHERE move_id = ? " +
                 "ORDER BY p.species_id, p.id ASC";
@@ -108,16 +109,16 @@ public class MoveRepositoryImpl implements MoveRepository {
         );
     }
 
-    private static PokemonSnap pokemonLearnableMoveMapper(ResultSet rs, Integer rowNum) throws SQLException {
+    private static MovePokemonLearnable pokemonLearnableMoveMapper(ResultSet rs, Integer rowNum) throws SQLException {
         String type2Str = rs.getString("type2");
         Type type2 = type2Str == null ? null : Type.fromString(type2Str);
-        return new PokemonSnap(
-                null,
+        return new MovePokemonLearnable(
                 rs.getInt("species_id"),
                 rs.getInt("id"),
                 rs.getString("name"),
                 Type.fromString(rs.getString("type1")),
-                type2
+                type2,
+                LearnMethod.fromName(rs.getString("method"))
         );
     }
 

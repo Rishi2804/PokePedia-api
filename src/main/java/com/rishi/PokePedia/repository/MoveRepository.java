@@ -1,9 +1,6 @@
 package com.rishi.PokePedia.repository;
 
-import com.rishi.PokePedia.model.Move;
-import com.rishi.PokePedia.model.MoveSnap;
-import com.rishi.PokePedia.model.PastMoveValues;
-import com.rishi.PokePedia.model.PokemonSnap;
+import com.rishi.PokePedia.model.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +9,6 @@ public interface MoveRepository {
     List<MoveSnap> getMoves();
     Optional<Move> getMoveById(Integer id);
     Optional<Move> getMoveByName(String name);
-    List<PokemonSnap> getPokemonLearnable(Integer id);
+    List<MovePokemonLearnable> getPokemonLearnable(Integer id);
     List<PastMoveValues> getPastValues(Integer id);
 }
