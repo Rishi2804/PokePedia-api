@@ -8,6 +8,10 @@ public class utils {
         String[] words = name.split("-");
 
         if (pokemon) {
+            if (name.equals("jangmo-o") || name.equals("hakamo-o") || name.equals("kommo-o")) {
+                return capitalizeFirstLetter(name);
+            }
+
             // Sort the words based on special rules
             Arrays.sort(words, (a, b) -> {
                 if (isSpecial(a)) {
@@ -33,6 +37,12 @@ public class utils {
                 case "paldea":
                     words[0] = "paldean";
                     break;
+                case "50":
+                    words[0] = "50%";
+                    break;
+                case "10":
+                    words[0] = "10%";
+                    break;
                 default:
                     break;
             }
@@ -48,8 +58,9 @@ public class utils {
     }
 
     private static boolean isSpecial(String word) {
-        return word.equals("mega") || word.equals("gmax") || word.equals("alola") ||
-                word.equals("galar") || word.equals("hisui") || word.equals("paldea");
+        return word.equals("mega") || word.equals("gmax") || word.equals("primal") || word.equals("ash") ||
+                word.equals("50") || word.equals("10") || word.equals("complete") ||
+                word.equals("alola") || word.equals("galar") || word.equals("hisui") || word.equals("paldea");
     }
 
     private static String capitalizeFirstLetter(String word) {
