@@ -1,7 +1,9 @@
 package com.rishi.PokePedia.service.impl;
 
 import com.rishi.PokePedia.dto.AbilityDto;
+import com.rishi.PokePedia.dto.AbilitySnapDto;
 import com.rishi.PokePedia.model.Ability;
+import com.rishi.PokePedia.model.AbilitySnap;
 import com.rishi.PokePedia.model.PokemonSnap;
 import com.rishi.PokePedia.repository.AbilityRepository;
 import com.rishi.PokePedia.service.AbilityService;
@@ -19,6 +21,17 @@ public class AbilityServiceImpl implements AbilityService {
     private final AbilityRepository abilityRepository;
 
     public AbilityServiceImpl(AbilityRepository abilityRepository) { this.abilityRepository = abilityRepository; }
+
+    @Override
+    public List<AbilitySnapDto> getAbilities() {
+        List<AbilitySnap> abilities = abilityRepository.getAbilities();
+        return abilities.stream().map(ability ->
+                new AbilitySnapDto(
+                    ability.name(),
+                    ability.gen()
+                )
+        ).toList();
+    }
 
     @Override
     public Optional<AbilityDto> getAbilityById(Integer id) {

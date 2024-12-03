@@ -2,6 +2,7 @@ package com.rishi.PokePedia.repository.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rishi.PokePedia.model.Ability;
+import com.rishi.PokePedia.model.AbilitySnap;
 import com.rishi.PokePedia.model.PokemonSnap;
 import com.rishi.PokePedia.model.enums.Type;
 import com.rishi.PokePedia.model.enums.VersionGroup;
@@ -23,6 +24,12 @@ public class AbilityRepositoryImpl implements AbilityRepository {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public AbilityRepositoryImpl(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
+
+    @Override
+    public List<AbilitySnap> getAbilities() {
+        String sql = "SELECT name, gen FROM ability ORDER BY id, gen ASC";
+        return jdbcTemplate.query(sql, AbilityRepositoryImpl::abilitySnapRowMapper);
+    }
 
     @Override
     public Optional<Ability> getAbilityById(Integer id) {
@@ -51,6 +58,13 @@ public class AbilityRepositoryImpl implements AbilityRepository {
                 "WHERE ability_id = ? " +
                 "ORDER BY p.species_id, p.id ASC";
         return jdbcTemplate.query(sql, AbilityRepositoryImpl::pokemonLearnableMoveMapper, id);
+    }
+
+    public static AbilitySnap abilitySnapRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        return new AbilitySnap(
+                rs.getString("name"),
+                rs.getInt("gen")
+        );
     }
 
     private static Ability abilityRowMapper(ResultSet rs, Integer rowNum) throws SQLException {

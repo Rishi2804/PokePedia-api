@@ -1,6 +1,7 @@
 package com.rishi.PokePedia.controller;
 
 import com.rishi.PokePedia.dto.AbilityDto;
+import com.rishi.PokePedia.dto.AbilitySnapDto;
 import com.rishi.PokePedia.service.AbilityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/ability")
 public class AbilityController {
     private final AbilityService abilityService;
     public AbilityController(AbilityService abilityService) { this.abilityService = abilityService; }
+    @GetMapping("/")
+    public List<AbilitySnapDto> getAbilities() {
+        return abilityService.getAbilities();
+    }
+
     @GetMapping("/{id:\\d+}")
     public AbilityDto getAbility(@PathVariable Integer id) {
         return abilityService.getAbilityById(id)
