@@ -27,7 +27,7 @@ public class AbilityServiceImpl implements AbilityService {
         List<AbilitySnap> abilities = abilityRepository.getAbilities();
         return abilities.stream().map(ability ->
                 new AbilitySnapDto(
-                    ability.name(),
+                    formatName(ability.name(), false),
                     ability.gen()
                 )
         ).toList();
