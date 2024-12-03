@@ -18,7 +18,7 @@ public record AbilityDto(
 
     public record Pokemon(
             Integer speciesId,
-            Integer id,
+            Integer pokemonId,
             String name,
             String type1,
             String type2
