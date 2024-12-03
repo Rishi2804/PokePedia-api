@@ -102,7 +102,7 @@ public class MoveServiceImpl implements MoveService {
                     List<MoveDto.PokemonLearnable.Pokemon> pokemon = pokemonVals.stream().map(mon -> new MoveDto.PokemonLearnable.Pokemon(
                             mon.speciedId(),
                             mon.pokemonId(),
-                            mon.name(),
+                            formatName(mon.name(), true),
                             mon.type1().name(),
                             mon.type2() == null ? null : mon.type2().name()
                     )).toList();
