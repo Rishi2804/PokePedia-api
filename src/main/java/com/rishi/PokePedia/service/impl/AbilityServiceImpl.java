@@ -56,6 +56,7 @@ public class AbilityServiceImpl implements AbilityService {
                 ability.id(),
                 formatName(ability.name(), false),
                 ability.gen(),
+                ability.effect(),
                 ability.descriptions().stream().map(description -> new AbilityDto.Description(
                         description.entry(),
                         Arrays.stream(description.groups()).map(group -> group.name()).toArray(String[]::new)

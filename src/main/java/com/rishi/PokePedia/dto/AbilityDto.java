@@ -6,6 +6,7 @@ public record AbilityDto(
         Integer id,
         String name,
         Integer gen,
+        String effect,
         List<Description> descriptions,
         List<Pokemon> pokemon
 ) {

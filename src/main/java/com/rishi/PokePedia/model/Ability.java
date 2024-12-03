@@ -8,6 +8,7 @@ public record Ability(
         Integer id,
         String name,
         Integer gen,
+        String effect,
         List<Description> descriptions
 ) {
     public record Description(

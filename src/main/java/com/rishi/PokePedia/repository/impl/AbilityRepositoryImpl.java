@@ -87,6 +87,7 @@ public class AbilityRepositoryImpl implements AbilityRepository {
                 rs.getInt("id"),
                 rs.getString("name"),
                 rs.getInt("gen"),
+                rs.getString("effect"),
                 descriptions
         );
     }
