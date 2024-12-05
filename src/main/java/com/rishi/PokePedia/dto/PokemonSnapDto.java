@@ -5,6 +5,7 @@ public record PokemonSnapDto(
         Integer speciesId,
         Integer pokemonId,
         String name,
+        Integer gen,
         String type1,
         String type2
 ) {

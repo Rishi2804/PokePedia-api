@@ -7,6 +7,7 @@ public record PokemonSnap(
         Integer speciesId,
         Integer id,
         String name,
+        Integer gen,
         Type type1,
         Type type2
 ) {

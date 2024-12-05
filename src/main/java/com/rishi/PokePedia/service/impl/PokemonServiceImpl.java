@@ -1,12 +1,10 @@
 package com.rishi.PokePedia.service.impl;
 
-import com.rishi.PokePedia.dto.MoveSnapDto;
-import com.rishi.PokePedia.dto.PokemonSnapDto;
-import com.rishi.PokePedia.dto.PokemonDto;
-import com.rishi.PokePedia.dto.SpeciesDto;
+import com.rishi.PokePedia.dto.*;
 import com.rishi.PokePedia.model.*;
 import com.rishi.PokePedia.model.enums.LearnMethod;
 import com.rishi.PokePedia.model.enums.PokedexRegion;
+import com.rishi.PokePedia.model.enums.PokedexVersion;
 import com.rishi.PokePedia.model.enums.VersionGroup;
 import com.rishi.PokePedia.repository.PokemonRepository;
 import com.rishi.PokePedia.service.PokemonService;
@@ -84,8 +82,65 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    public List<PokedexDto> getDexByVersion(String name) {
+        List<PokedexDto> dexes = new ArrayList<>();
+
+        PokedexVersion version = PokedexVersion.fromString(name);
+        if (version == PokedexVersion.DIAMOND_PEARL_PLATINUM) {
+            List<PokemonSnapDto> fulldex = getDexByRegion(version.getRegions()[0]);
+            int seperator = 0;
+            for (int i = 0; i < fulldex.size(); i++) {
+                if (fulldex.get(i).dexNumber() == 152) {
+                    seperator = i;
+                    break;
+                }
+            }
+            List<PokemonSnapDto> originalSinnoh = fulldex.subList(0, seperator);
+            List<PokemonSnapDto> extendedSinnoh = fulldex.subList(seperator, fulldex.size());
+
+            dexes.add(new PokedexDto("Original Sinnoh", originalSinnoh));
+            dexes.add(new PokedexDto("Platinum Expansion", extendedSinnoh));
+            return dexes;
+        }
+
+        if (version == PokedexVersion.NATIONAL) {
+            List<PokemonSnapDto> fulldex = getDexByRegion(version.getRegions()[0]);
+            int[] seperatorNums = {1, 152, 252, 387, 494, 650, 722, 810, 906};
+            int[] seperatorIndicies = Arrays.stream(seperatorNums).map((num) -> {
+                for (int i = 0; i < fulldex.size(); i++) {
+                    if (fulldex.get(i).dexNumber() == num) {
+                        return i;
+                    }
+                }
+                return -1;
+            }).toArray();
+
+            int n = seperatorIndicies.length;
+            for (int i = 1; i < n; i++) {
+                dexes.add(new PokedexDto("Gen " + i, fulldex.subList(seperatorIndicies[i-1], seperatorIndicies[i])));
+            }
+            dexes.add(new PokedexDto("Gen " + n, fulldex.subList(seperatorIndicies[n-1], fulldex.size())));
+
+            return dexes;
+        }
+
+        for (PokedexRegion region : version.getRegions()) {
+            dexes.add(new PokedexDto(
+                    region.getName(),
+                    getDexByRegion(region)
+            ));
+        }
+        return dexes;
+    }
+
+    @Override
     public List<PokemonSnapDto> getDexByRegion(String name) {
         PokedexRegion region = PokedexRegion.fromName(name);
+        return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
+    }
+
+    @Override
+    public List<PokemonSnapDto> getDexByRegion(PokedexRegion region) {
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
     }
 
@@ -185,6 +240,7 @@ public class PokemonServiceImpl implements PokemonService {
                 entry.speciesId(),
                 entry.id(),
                 formatName(entry.name(), true),
+                entry.gen(),
                 entry.type1().name(),
                 entry.type2() == null ? null : entry.type2().name()
         )).toList();

@@ -1,5 +1,6 @@
 package com.rishi.PokePedia.controller;
 
+import com.rishi.PokePedia.dto.PokedexDto;
 import com.rishi.PokePedia.dto.PokemonSnapDto;
 import com.rishi.PokePedia.dto.PokemonDto;
 import com.rishi.PokePedia.dto.SpeciesDto;
@@ -50,9 +51,9 @@ public class PokemonController {
     }
 
     @GetMapping("/pokedex/{name}")
-    public List<PokemonSnapDto> getDex(@PathVariable String name) {
+    public List<PokedexDto> getDex(@PathVariable String name) {
         try {
-            return pokemonService.getDexByRegion(name);
+            return pokemonService.getDexByVersion(name);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No pokedex exists of name " + name);
         }

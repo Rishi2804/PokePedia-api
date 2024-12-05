@@ -112,12 +112,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     @Override
     public List<PokemonSnap> getDexByRegion(PokedexRegion pokedexRegion) {
         if (pokedexRegion == PokedexRegion.NATIONAL) {
-            String sql = "SELECT s.id AS num, s.id AS sid, p.id, s.name, p.type1, p.type2 FROM pokemon p " +
+            String sql = "SELECT s.id AS num, s.id AS sid, p.id, s.name, p.gen, p.type1, p.type2 FROM pokemon p " +
                     "JOIN species s ON s.id = p.species_id " +
                     "ORDER BY s.id, p.id ASC";
             return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokedexRowMapper);
         } else {
-            String sql = "SELECT d.num, p.id, s.name, s.id AS sid, " +
+            String sql = "SELECT d.num, p.id, s.name, s.id AS sid, p.gen, " +
                     "COALESCE(pt.type1, p.type1) AS type1, " +
                     "CASE WHEN pt.type1 IS NOT NULL THEN pt.type2 ELSE p.type2 END AS type2 " +
                     "FROM dexnumber d " +
@@ -126,7 +126,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                     "LEFT JOIN pasttypes pt ON p.id = pt.pokemon_id AND pt.gen >= ? " +
                     "WHERE d.name::text = ? " +
                     "ORDER BY d.num, CASE WHEN p.id = d.default_variate THEN 0 ELSE 1 END";
-            return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokedexRowMapper, pokedexRegion.getGen(), pokedexRegion.getName());
+            return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokedexRowMapper, pokedexRegion.getGen(), pokedexRegion.getString());
         }
     }
 
@@ -189,6 +189,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 rs.getInt("sid"),
                 rs.getInt("id"),
                 rs.getString("name"),
+                rs.getInt("gen"),
                 Type.fromString(rs.getString("type1")),
                 type2
         );

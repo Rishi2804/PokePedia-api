@@ -53,7 +53,7 @@ public class AbilityRepositoryImpl implements AbilityRepository {
 
     @Override
     public List<PokemonSnap> getPokemonLearnable(Integer id) {
-        String sql = "SELECT DISTINCT p.id, p.name, p.type1, p.type2, p.species_id FROM abilitydetails " +
+        String sql = "SELECT DISTINCT p.id, p.name, p.gen, p.type1, p.type2, p.species_id FROM abilitydetails " +
                 "JOIN pokemon p ON p.id = pokemon_id " +
                 "WHERE ability_id = ? " +
                 "ORDER BY p.species_id, p.id ASC";
@@ -100,6 +100,7 @@ public class AbilityRepositoryImpl implements AbilityRepository {
                 rs.getInt("species_id"),
                 rs.getInt("id"),
                 rs.getString("name"),
+                rs.getInt("gen"),
                 Type.fromString(rs.getString("type1")),
                 type2
         );
