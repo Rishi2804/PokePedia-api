@@ -60,14 +60,18 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
-    public List<PokemonMoveDetails> getMovesOfPokemon(Integer id) {
+    public List<PokemonMoveDetails> getMovesOfPokemon(Integer id, VersionGroup versionGroup) {
         String sql = "SELECT * FROM get_pokemon_moves(?)";
+        if (versionGroup != null && versionGroup != VersionGroup.NATIONAL) {
+            sql += " WHERE version::text = ?";
+            return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokemonMovesMapper, id, versionGroup.getVersionName());
+        }
         return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokemonMovesMapper, id);
     }
 
     @Override
     public List<PokemonAbility> getAbilitiesOfPokemon(Integer id) {
-        String sql = "SELECT a.name, d.* FROM abilitydetails d " +
+        String sql = "SELECT a.name, a.gen as igen, d.* FROM abilitydetails d " +
                 "JOIN ability a ON a.id = d.ability_id " +
                 "WHERE d.pokemon_id = ?";
         return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokemonAbilityMapper, id);
@@ -127,6 +131,28 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                     "WHERE d.name::text = ? " +
                     "ORDER BY d.num, CASE WHEN p.id = d.default_variate THEN 0 ELSE 1 END";
             return jdbcTemplate.query(sql, PokemonRepositoryImpl::pokedexRowMapper, pokedexRegion.getGen(), pokedexRegion.getString());
+        }
+    }
+
+    @Override
+    public List<TeamBuildingCand> getTeamCandidates(PokedexRegion region) {
+
+        if (region == PokedexRegion.NATIONAL) {
+            String sql = "SELECT p.id, p.name, p.gen, p.type1, p.type2 FROM pokemon p " +
+                    "JOIN species s ON s.id = p.species_id " +
+                    "ORDER BY s.id, p.id ASC";
+            return jdbcTemplate.query(sql, PokemonRepositoryImpl::teamBuildingCandMapper);
+        } else {
+            String sql = "SELECT d.num, p.id, p.name, p.gen, " +
+                    "COALESCE(pt.type1, p.type1) AS type1, " +
+                    "CASE WHEN pt.type1 IS NOT NULL THEN pt.type2 ELSE p.type2 END AS type2 " +
+                    "FROM dexnumber d " +
+                    "JOIN pokemon p ON d.default_variate = p.id OR d.alt_variates @> ARRAY[p.id] " +
+                    "JOIN species s ON s.id = d.species_id " +
+                    "LEFT JOIN pasttypes pt ON p.id = pt.pokemon_id AND pt.gen >= ? " +
+                    "WHERE d.name::text = ? " +
+                    "ORDER BY d.num, CASE WHEN p.id = d.default_variate THEN 0 ELSE 1 END";
+            return jdbcTemplate.query(sql, PokemonRepositoryImpl::teamBuildingCandMapper, region.getGen(), region.getString());
         }
     }
 
@@ -240,7 +266,20 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 rs.getInt("ability_id"),
                 rs.getString("name"),
                 rs.getBoolean("hidden"),
-                gen
+                gen,
+                rs.getInt("igen")
+        );
+    }
+
+    private static TeamBuildingCand teamBuildingCandMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        String type2Str = rs.getString("type2");
+        Type type2 = type2Str == null ? null : Type.fromString(type2Str);
+        return new TeamBuildingCand(
+                rs.getInt("id"),
+                rs.getString("name"),
+                Type.fromString(rs.getString("type1")),
+                type2,
+                rs.getInt("gen")
         );
     }
 }

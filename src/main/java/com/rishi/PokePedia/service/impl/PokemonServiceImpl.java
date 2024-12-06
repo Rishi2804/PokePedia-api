@@ -28,7 +28,7 @@ public class PokemonServiceImpl implements PokemonService {
         Optional<Pokemon> pokemon = pokemonRepository.getPokemonById(id);
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
         List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
-        List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id);
+        List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id, null);
         List<PokemonAbility> pokemonAbilities = pokemonRepository.getAbilitiesOfPokemon(id);
         return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves, pokemonAbilities));
     }
@@ -40,7 +40,7 @@ public class PokemonServiceImpl implements PokemonService {
             Integer id = value.id();
             List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
             List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
-            List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id);
+            List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id, null);
             List<PokemonAbility> pokemonAbilities = pokemonRepository.getAbilitiesOfPokemon(id);
             return mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves, pokemonAbilities);
         });
@@ -142,6 +142,64 @@ public class PokemonServiceImpl implements PokemonService {
     @Override
     public List<PokemonSnapDto> getDexByRegion(PokedexRegion region) {
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
+    }
+
+    @Override
+    public List<TeamBuildingDto> getTeamCandidates(String versionGroupName) {
+        VersionGroup versionGroup = VersionGroup.fromName(versionGroupName);
+        PokedexRegion[] regions = versionGroup.getRegions();
+        List<TeamBuildingDto> res = new ArrayList<>();
+        for (PokedexRegion region : regions) {
+            List<TeamBuildingCand> teamCands = (pokemonRepository.getTeamCandidates(region));
+            res.add(new TeamBuildingDto(
+                    region.getName(),
+                    teamCands.stream().map(cand -> {
+                        List<PokemonAbility> abilities = pokemonRepository.getAbilitiesOfPokemon(cand.id());
+                        List<PokemonMoveDetails> moves = pokemonRepository.getMovesOfPokemon(cand.id(), versionGroup);
+                        Set<Integer> seenMoveIds = new HashSet<>();
+                        List<TeamBuildingDto.CandidateDto.Ability> abilitiesDto = new ArrayList<>();
+
+                        Optional<PokemonAbility> matchedItem = abilities.stream()
+                                .filter(item -> item.genRemoved() != null)  // Filter items where genRemoved() is not null
+                                .findFirst();
+                        if (matchedItem.isPresent() && versionGroup.getGen() <= matchedItem.get().genRemoved()) {
+                            boolean hiddenRemoved = abilities.stream().anyMatch(item -> (item.genRemoved() != null && item.isHidden()));
+                            if (hiddenRemoved) {
+                                for (PokemonAbility item : abilities) {
+                                    if (item.genRemoved() == null && item.isHidden()) continue;
+                                    else abilitiesDto.add(new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)));
+                                }
+                            } else { // special cases
+                                if (cand.id() == 94) abilitiesDto.add(new TeamBuildingDto.CandidateDto.Ability(26, "Levitate"));
+                                if (cand.id() == 275) abilitiesDto = abilities.stream()
+                                                        .filter(item -> item.abilityId() != 274)
+                                                        .map(item -> new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)))
+                                                        .toList();
+                            }
+                        } else {
+                            abilitiesDto = abilities.stream()
+                                    .filter(item -> item.gen() <= versionGroup.getGen())
+                                    .filter(item -> item.genRemoved() == null)
+                                    .map(item -> new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)))
+                                    .toList();
+                        }
+                        return new TeamBuildingDto.CandidateDto(
+                                cand.id(),
+                                cand.name(),
+                                cand.type1().name(),
+                                cand.type2() != null ? cand.type2().name() : null,
+                                cand.gen(),
+                                abilitiesDto,
+                                moves.stream()
+                                        .filter(item -> seenMoveIds.add(item.moveId()))
+                                        .map(item ->
+                                        new TeamBuildingDto.CandidateDto.Move(item.moveId(), formatName(item.name(), false), item.type().name(), item.moveClass().name()))
+                                        .toList()
+                        );
+                    }).toList()
+            ));
+        }
+        return res;
     }
 
     private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<EvolutionLine> evolutionChain, List<PokemonMoveDetails> pokemonMoves, List<PokemonAbility> abilities) {

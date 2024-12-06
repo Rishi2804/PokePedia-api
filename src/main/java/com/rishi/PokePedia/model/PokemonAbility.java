@@ -4,6 +4,7 @@ public record PokemonAbility(
                 Integer abilityId,
                 String abilityName,
                 Boolean isHidden,
-                Integer genRemoved
+                Integer genRemoved,
+                Integer gen
 ) {
 }

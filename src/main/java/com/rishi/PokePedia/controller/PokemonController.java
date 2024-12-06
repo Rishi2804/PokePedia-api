@@ -1,9 +1,6 @@
 package com.rishi.PokePedia.controller;
 
-import com.rishi.PokePedia.dto.PokedexDto;
-import com.rishi.PokePedia.dto.PokemonSnapDto;
-import com.rishi.PokePedia.dto.PokemonDto;
-import com.rishi.PokePedia.dto.SpeciesDto;
+import com.rishi.PokePedia.dto.*;
 import com.rishi.PokePedia.service.PokemonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,6 +54,16 @@ public class PokemonController {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No pokedex exists of name " + name);
         }
+    }
+
+    @GetMapping("/team-building/{version}")
+    public List<TeamBuildingDto> getCandidates(@PathVariable String version) {
+        try {
+            return pokemonService.getTeamCandidates(version);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Version Group exists of name " + version);
+        }
+
     }
 
 }
