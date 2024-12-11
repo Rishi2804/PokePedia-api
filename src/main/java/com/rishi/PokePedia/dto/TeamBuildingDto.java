@@ -12,6 +12,7 @@ public record TeamBuildingDto(
             String type1,
             String type2,
             Integer gen,
+            Integer genderRate,
             List<Ability> abilities,
             List<Move> moves
     ) {

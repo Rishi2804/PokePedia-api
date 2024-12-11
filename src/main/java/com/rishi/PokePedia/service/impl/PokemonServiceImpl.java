@@ -185,10 +185,11 @@ public class PokemonServiceImpl implements PokemonService {
                         }
                         return new TeamBuildingDto.CandidateDto(
                                 cand.id(),
-                                cand.name(),
+                                formatName(cand.name(), true),
                                 cand.type1().name(),
                                 cand.type2() != null ? cand.type2().name() : null,
                                 cand.gen(),
+                                cand.genderRate(),
                                 abilitiesDto,
                                 moves.stream()
                                         .filter(item -> seenMoveIds.add(item.moveId()))

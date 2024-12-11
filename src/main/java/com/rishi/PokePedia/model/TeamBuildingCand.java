@@ -7,6 +7,7 @@ public record TeamBuildingCand(
         String name,
         Type type1,
         Type type2,
-        Integer gen
+        Integer gen,
+        Integer genderRate
 ) {
 }

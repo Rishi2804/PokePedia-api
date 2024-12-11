@@ -138,12 +138,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     public List<TeamBuildingCand> getTeamCandidates(PokedexRegion region) {
 
         if (region == PokedexRegion.NATIONAL) {
-            String sql = "SELECT p.id, p.name, p.gen, p.type1, p.type2 FROM pokemon p " +
+            String sql = "SELECT p.id, p.name, p.gen, p.type1, p.type2, p.gender_rate FROM pokemon p " +
                     "JOIN species s ON s.id = p.species_id " +
                     "ORDER BY s.id, p.id ASC";
             return jdbcTemplate.query(sql, PokemonRepositoryImpl::teamBuildingCandMapper);
         } else {
-            String sql = "SELECT d.num, p.id, p.name, p.gen, " +
+            String sql = "SELECT d.num, p.id, p.name, p.gen, p.gender_rate, " +
                     "COALESCE(pt.type1, p.type1) AS type1, " +
                     "CASE WHEN pt.type1 IS NOT NULL THEN pt.type2 ELSE p.type2 END AS type2 " +
                     "FROM dexnumber d " +
@@ -279,7 +279,8 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 rs.getString("name"),
                 Type.fromString(rs.getString("type1")),
                 type2,
-                rs.getInt("gen")
+                rs.getInt("gen"),
+                rs.getInt("gender_rate")
         );
     }
 }
