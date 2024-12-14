@@ -26,4 +26,6 @@ public interface PokemonRepository {
     List<PokemonSnap> getDexByRegion(PokedexRegion pokedexRegion);
 
     List<TeamBuildingCand> getTeamCandidates(PokedexRegion region);
+
+    List<TeamBuildingCand> getTeamCandidatesNational(VersionGroup group);
 }

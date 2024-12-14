@@ -149,57 +149,24 @@ public class PokemonServiceImpl implements PokemonService {
         VersionGroup versionGroup = VersionGroup.fromName(versionGroupName);
         PokedexRegion[] regions = versionGroup.getRegions();
         List<TeamBuildingDto> res = new ArrayList<>();
+        Set<Integer> seenPokemonIds = new HashSet<>();
         for (PokedexRegion region : regions) {
             List<TeamBuildingCand> teamCands = (pokemonRepository.getTeamCandidates(region));
+            teamCands.forEach(item -> seenPokemonIds.add(item.id()));
             res.add(new TeamBuildingDto(
                     region.getName(),
-                    teamCands.stream().map(cand -> {
-                        List<PokemonAbility> abilities = pokemonRepository.getAbilitiesOfPokemon(cand.id());
-                        List<PokemonMoveDetails> moves = pokemonRepository.getMovesOfPokemon(cand.id(), versionGroup);
-                        Set<Integer> seenMoveIds = new HashSet<>();
-                        List<TeamBuildingDto.CandidateDto.Ability> abilitiesDto = new ArrayList<>();
-
-                        Optional<PokemonAbility> matchedItem = abilities.stream()
-                                .filter(item -> item.genRemoved() != null)  // Filter items where genRemoved() is not null
-                                .findFirst();
-                        if (matchedItem.isPresent() && versionGroup.getGen() <= matchedItem.get().genRemoved()) {
-                            boolean hiddenRemoved = abilities.stream().anyMatch(item -> (item.genRemoved() != null && item.isHidden()));
-                            if (hiddenRemoved) {
-                                for (PokemonAbility item : abilities) {
-                                    if (item.genRemoved() == null && item.isHidden()) continue;
-                                    else abilitiesDto.add(new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)));
-                                }
-                            } else { // special cases
-                                if (cand.id() == 94) abilitiesDto.add(new TeamBuildingDto.CandidateDto.Ability(26, "Levitate"));
-                                if (cand.id() == 275) abilitiesDto = abilities.stream()
-                                                        .filter(item -> item.abilityId() != 274)
-                                                        .map(item -> new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)))
-                                                        .toList();
-                            }
-                        } else {
-                            abilitiesDto = abilities.stream()
-                                    .filter(item -> item.gen() <= versionGroup.getGen())
-                                    .filter(item -> item.genRemoved() == null)
-                                    .map(item -> new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)))
-                                    .toList();
-                        }
-                        return new TeamBuildingDto.CandidateDto(
-                                cand.id(),
-                                formatName(cand.name(), true),
-                                cand.type1().name(),
-                                cand.type2() != null ? cand.type2().name() : null,
-                                cand.gen(),
-                                cand.genderRate(),
-                                abilitiesDto,
-                                moves.stream()
-                                        .filter(item -> seenMoveIds.add(item.moveId()))
-                                        .map(item ->
-                                        new TeamBuildingDto.CandidateDto.Move(item.moveId(), formatName(item.name(), false), item.type().name(), item.moveClass().name()))
-                                        .toList()
-                        );
-                    }).toList()
+                    mapToTeamCandidateDto(teamCands, versionGroup)
             ));
         }
+        List<TeamBuildingCand> nationalCands = pokemonRepository.getTeamCandidatesNational(versionGroup);
+        nationalCands = nationalCands.stream().filter(item -> !seenPokemonIds.contains(item.id())).toList();
+        if (versionGroup != VersionGroup.NATIONAL && nationalCands.size() > 0) {
+            res.add(new TeamBuildingDto(
+                    "National",
+                    mapToTeamCandidateDto(nationalCands, versionGroup)
+            ));
+        }
+
         return res;
     }
 
@@ -303,5 +270,53 @@ public class PokemonServiceImpl implements PokemonService {
                 entry.type1().name(),
                 entry.type2() == null ? null : entry.type2().name()
         )).toList();
+    }
+
+    private List<TeamBuildingDto.CandidateDto> mapToTeamCandidateDto(List<TeamBuildingCand> teamCands, VersionGroup versionGroup) {
+        return teamCands.stream().map(cand -> {
+            List<PokemonAbility> abilities = pokemonRepository.getAbilitiesOfPokemon(cand.id());
+            List<PokemonMoveDetails> moves = pokemonRepository.getMovesOfPokemon(cand.id(), versionGroup);
+            Set<Integer> seenMoveIds = new HashSet<>();
+            List<TeamBuildingDto.CandidateDto.Ability> abilitiesDto = new ArrayList<>();
+
+            Optional<PokemonAbility> matchedItem = abilities.stream()
+                    .filter(item -> item.genRemoved() != null)  // Filter items where genRemoved() is not null
+                    .findFirst();
+            if (matchedItem.isPresent() && versionGroup.getGen() <= matchedItem.get().genRemoved()) {
+                boolean hiddenRemoved = abilities.stream().anyMatch(item -> (item.genRemoved() != null && item.isHidden()));
+                if (hiddenRemoved) {
+                    for (PokemonAbility item : abilities) {
+                        if (item.genRemoved() == null && item.isHidden()) continue;
+                        else abilitiesDto.add(new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)));
+                    }
+                } else { // special cases
+                    if (cand.id() == 94) abilitiesDto.add(new TeamBuildingDto.CandidateDto.Ability(26, "Levitate"));
+                    if (cand.id() == 275) abilitiesDto = abilities.stream()
+                            .filter(item -> item.abilityId() != 274)
+                            .map(item -> new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)))
+                            .toList();
+                }
+            } else {
+                abilitiesDto = abilities.stream()
+                        .filter(item -> item.gen() <= versionGroup.getGen())
+                        .filter(item -> item.genRemoved() == null)
+                        .map(item -> new TeamBuildingDto.CandidateDto.Ability(item.abilityId(), formatName(item.abilityName(), false)))
+                        .toList();
+            }
+            return new TeamBuildingDto.CandidateDto(
+                    cand.id(),
+                    formatName(cand.name(), true),
+                    cand.type1().name(),
+                    cand.type2() != null ? cand.type2().name() : null,
+                    cand.gen(),
+                    cand.genderRate(),
+                    abilitiesDto,
+                    moves.stream()
+                            .filter(item -> seenMoveIds.add(item.moveId()))
+                            .map(item ->
+                                    new TeamBuildingDto.CandidateDto.Move(item.moveId(), formatName(item.name(), false), item.type().name(), item.moveClass().name()))
+                            .toList()
+            );
+        }).toList();
     }
 }

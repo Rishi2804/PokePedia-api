@@ -156,6 +156,19 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         }
     }
 
+    @Override
+    public List<TeamBuildingCand> getTeamCandidatesNational(VersionGroup group) {
+        String sql = "SELECT DISTINCT p.id, p.name, p.gen, p.gender_rate, p.species_id, " +
+                "COALESCE(pt.type1, p.type1) AS type1, " +
+                "CASE WHEN pt.type1 IS NOT NULL THEN pt.type2 ELSE p.type2 END AS type2 " +
+                "FROM pokemon p " +
+                "JOIN movedetails md ON p.id = md.pokemon_id " +
+                "LEFT JOIN pasttypes pt ON p.id = pt.pokemon_id AND pt.gen >= ? " +
+                "WHERE md.version::text = ? " +
+                "ORDER BY p.species_id, p.id;";
+        return jdbcTemplate.query(sql, PokemonRepositoryImpl::teamBuildingCandMapper, group.getGen(), group.getVersionName());
+    }
+
     private static Pokemon pokemonRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
         String type2Str = rs.getString("type2");
         Type type2 = type2Str == null ? null : Type.fromString(type2Str);
