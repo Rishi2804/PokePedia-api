@@ -11,6 +11,9 @@ public class utils {
             if (name.equals("jangmo-o") || name.equals("hakamo-o") || name.equals("kommo-o")) {
                 return capitalizeFirstLetter(name);
             }
+            if (name.equals("ho-oh")) {
+                return "Ho-Oh";
+            }
 
             // Sort the words based on special rules
             Arrays.sort(words, (a, b) -> {
