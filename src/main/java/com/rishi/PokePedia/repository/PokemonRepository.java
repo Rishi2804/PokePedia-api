@@ -12,6 +12,7 @@ public interface PokemonRepository {
     Optional<Pokemon> getPokemonById(Integer id);
     Optional<Pokemon> getPokemonByName(String name);
     List<DexNumbers> getDexNumbersFromPokemon(Integer id);
+    List<DexEntries> getDexEntriesFromPokemon(Integer id);
     List<EvolutionLine> getEvolutionChainOfPokemon(Integer id);
 
     List<PokemonMoveDetails> getMovesOfPokemon(Integer id, VersionGroup versionGroup);

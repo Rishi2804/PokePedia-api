@@ -1,6 +1,5 @@
 package com.rishi.PokePedia.model;
 
-import com.rishi.PokePedia.model.enums.Game;
 import com.rishi.PokePedia.model.enums.Type;
 
 public record Pokemon(
@@ -20,9 +19,6 @@ public record Pokemon(
         Integer spdef,
         Integer speed,
         Integer bst,
-        String[] forms,
-        DexEntry[] dexEntries
+        String[] forms
 
-) {
-    public record DexEntry(Game game, String entry) {}
-}
+) { }

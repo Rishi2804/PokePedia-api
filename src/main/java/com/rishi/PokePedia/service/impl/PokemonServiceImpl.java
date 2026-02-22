@@ -2,10 +2,7 @@ package com.rishi.PokePedia.service.impl;
 
 import com.rishi.PokePedia.dto.*;
 import com.rishi.PokePedia.model.*;
-import com.rishi.PokePedia.model.enums.LearnMethod;
-import com.rishi.PokePedia.model.enums.PokedexRegion;
-import com.rishi.PokePedia.model.enums.PokedexVersion;
-import com.rishi.PokePedia.model.enums.VersionGroup;
+import com.rishi.PokePedia.model.enums.*;
 import com.rishi.PokePedia.repository.PokemonRepository;
 import com.rishi.PokePedia.service.PokemonService;
 import org.springframework.stereotype.Service;
@@ -27,10 +24,11 @@ public class PokemonServiceImpl implements PokemonService {
     public Optional<PokemonDto> getPokemonById(Integer id) {
         Optional<Pokemon> pokemon = pokemonRepository.getPokemonById(id);
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
+        List<DexEntries> dexEntries = pokemonRepository.getDexEntriesFromPokemon(id);
         List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
         List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id, null);
         List<PokemonAbility> pokemonAbilities = pokemonRepository.getAbilitiesOfPokemon(id);
-        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves, pokemonAbilities));
+        return pokemon.map(value -> mapToPokemonDto(value, dexNumbers, dexEntries, evolutionChain, pokemonMoves, pokemonAbilities));
     }
 
     @Override
@@ -39,10 +37,11 @@ public class PokemonServiceImpl implements PokemonService {
         return pokemon.map(value -> {
             Integer id = value.id();
             List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
+            List<DexEntries> dexEntries = pokemonRepository.getDexEntriesFromPokemon(id);
             List<EvolutionLine> evolutionChain = pokemonRepository.getEvolutionChainOfPokemon(id);
             List<PokemonMoveDetails> pokemonMoves = pokemonRepository.getMovesOfPokemon(id, null);
             List<PokemonAbility> pokemonAbilities = pokemonRepository.getAbilitiesOfPokemon(id);
-            return mapToPokemonDto(value, dexNumbers, evolutionChain, pokemonMoves, pokemonAbilities);
+            return mapToPokemonDto(value, dexNumbers, dexEntries, evolutionChain, pokemonMoves, pokemonAbilities);
         });
     }
 
@@ -170,7 +169,7 @@ public class PokemonServiceImpl implements PokemonService {
         return res;
     }
 
-    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<EvolutionLine> evolutionChain, List<PokemonMoveDetails> pokemonMoves, List<PokemonAbility> abilities) {
+    private PokemonDto mapToPokemonDto(Pokemon pokemon, List<DexNumbers> dexNumbers, List<DexEntries> dexEntries, List<EvolutionLine> evolutionChain, List<PokemonMoveDetails> pokemonMoves, List<PokemonAbility> abilities) {
         List<PokemonDto.MovesetDto> moveset = mapToMovesetDtoHelper(pokemonMoves);
         return new PokemonDto(
                 pokemon.id(),
@@ -198,9 +197,10 @@ public class PokemonServiceImpl implements PokemonService {
                         pokemon.bst()
                 ),
                 pokemon.forms(),
-                Arrays.stream(pokemon.dexEntries())
-                        .map(dexEntry -> new PokemonDto.DexEntryDto(dexEntry.game().name(), dexEntry.entry()))
-                        .toArray(PokemonDto.DexEntryDto[]::new),
+                dexEntries.stream()
+                            .sorted(Comparator.comparing(DexEntries::game, Game.ORDER))
+                            .map(entry -> new PokemonDto.DexEntryDto(entry.game().name(), entry.entry()))
+                            .toArray(PokemonDto.DexEntryDto[]::new),
                 dexNumbers.stream()
                         .map(dex -> new PokemonDto.DexNumberDto(dex.region().name(), dex.dexNumber()))
                         .toArray(PokemonDto.DexNumberDto[]::new),

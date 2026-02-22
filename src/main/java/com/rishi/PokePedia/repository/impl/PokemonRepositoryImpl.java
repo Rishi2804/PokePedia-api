@@ -54,6 +54,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
+    public List<DexEntries> getDexEntriesFromPokemon(Integer id) {
+        String sql = "SELECT * FROM dexentries WHERE pokemon_id = ?";
+        return jdbcTemplate.query(sql, PokemonRepositoryImpl::dexEntriesRowMapper, id);
+    }
+
+    @Override
     public List<EvolutionLine> getEvolutionChainOfPokemon(Integer id) {
         String sql = "SELECT * FROM get_evolution_chain_by_id(?)";
         return jdbcTemplate.query(sql, PokemonRepositoryImpl::evolutionRowMapper, id);
@@ -176,20 +182,20 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         Array formsArray = rs.getArray("forms");
         String[] forms = formsArray == null ? null : (String[]) formsArray.getArray();
 
-        String[] dexEntriesJsonStrs = (String[]) rs.getArray("dex_entries").getArray();
-        Pokemon.DexEntry[] dexEntries = new Pokemon.DexEntry[dexEntriesJsonStrs.length];
-        record DexEntryExtractor (String game, String entry){}
-        for (int i = 0; i < dexEntriesJsonStrs.length; i++) {
-            try {
-                DexEntryExtractor extract = objectMapper.readValue(dexEntriesJsonStrs[i], DexEntryExtractor.class);
-                dexEntries[i] = new Pokemon.DexEntry(Game.fromName(extract.game()), extract.entry());
-            } catch (Exception e) {
-                e.printStackTrace();
-                dexEntries[i] = null;
-            }
-        }
+//        String[] dexEntriesJsonStrs = (String[]) rs.getArray("dex_entries").getArray();
+//        Pokemon.DexEntry[] dexEntries = new Pokemon.DexEntry[dexEntriesJsonStrs.length];
+//        record DexEntryExtractor (String game, String entry){}
+//        for (int i = 0; i < dexEntriesJsonStrs.length; i++) {
+//            try {
+//                DexEntryExtractor extract = objectMapper.readValue(dexEntriesJsonStrs[i], DexEntryExtractor.class);
+//                dexEntries[i] = new Pokemon.DexEntry(Game.fromName(extract.game()), extract.entry());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                dexEntries[i] = null;
+//            }
+//        }
 
-        Arrays.sort(dexEntries, Comparator.comparing(Pokemon.DexEntry::game, Game.ORDER));
+//        Arrays.sort(dexEntries, Comparator.comparing(Pokemon.DexEntry::game, Game.ORDER));
 
         return new Pokemon(
                 rs.getInt("id"),
@@ -208,8 +214,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 rs.getInt("spdef"),
                 rs.getInt("speed"),
                 rs.getInt("bst"),
-                forms,
-                dexEntries
+                forms
         );
     }
 
@@ -217,6 +222,13 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         return new DexNumbers(
                 rs.getInt("num"),
                 PokedexRegion.fromName(rs.getString("name"))
+        );
+    }
+
+    private static DexEntries dexEntriesRowMapper(ResultSet rs, Integer rowNum) throws SQLException {
+        return new DexEntries(
+                Game.fromName(rs.getString("game")),
+                rs.getString("entry")
         );
     }
 
