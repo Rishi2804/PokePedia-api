@@ -7,6 +7,7 @@ import com.rishi.PokePedia.model.AbilitySnap;
 import com.rishi.PokePedia.model.PokemonSnap;
 import com.rishi.PokePedia.repository.AbilityRepository;
 import com.rishi.PokePedia.service.AbilityService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -23,6 +24,7 @@ public class AbilityServiceImpl implements AbilityService {
     public AbilityServiceImpl(AbilityRepository abilityRepository) { this.abilityRepository = abilityRepository; }
 
     @Override
+    @Cacheable(value = "abilityCache", sync = true)
     public List<AbilitySnapDto> getAbilities() {
         List<AbilitySnap> abilities = abilityRepository.getAbilities();
         return abilities.stream().map(ability ->
@@ -34,6 +36,7 @@ public class AbilityServiceImpl implements AbilityService {
     }
 
     @Override
+    @Cacheable(value = "abilityCache", key = "'id:' + #id", sync = true)
     public Optional<AbilityDto> getAbilityById(Integer id) {
         Optional<Ability> ability = abilityRepository.getAbilityById(id);
         return ability.map(val -> {
@@ -43,6 +46,7 @@ public class AbilityServiceImpl implements AbilityService {
     }
 
     @Override
+    @Cacheable(value = "moveCache", key = "'name:' + #name.toLowerCase()", sync = true)
     public Optional<AbilityDto> getAbilityByName(String name) {
         Optional<Ability> ability = abilityRepository.getAbilityByName(name);
         return ability.map(val -> {

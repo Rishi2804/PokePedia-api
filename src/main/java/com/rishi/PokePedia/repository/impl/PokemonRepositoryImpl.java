@@ -182,21 +182,6 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         Array formsArray = rs.getArray("forms");
         String[] forms = formsArray == null ? null : (String[]) formsArray.getArray();
 
-//        String[] dexEntriesJsonStrs = (String[]) rs.getArray("dex_entries").getArray();
-//        Pokemon.DexEntry[] dexEntries = new Pokemon.DexEntry[dexEntriesJsonStrs.length];
-//        record DexEntryExtractor (String game, String entry){}
-//        for (int i = 0; i < dexEntriesJsonStrs.length; i++) {
-//            try {
-//                DexEntryExtractor extract = objectMapper.readValue(dexEntriesJsonStrs[i], DexEntryExtractor.class);
-//                dexEntries[i] = new Pokemon.DexEntry(Game.fromName(extract.game()), extract.entry());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                dexEntries[i] = null;
-//            }
-//        }
-
-//        Arrays.sort(dexEntries, Comparator.comparing(Pokemon.DexEntry::game, Game.ORDER));
-
         return new Pokemon(
                 rs.getInt("id"),
                 rs.getInt("species_id"),

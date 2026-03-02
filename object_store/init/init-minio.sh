@@ -23,7 +23,7 @@ echo "Creating bucket: $BUCKET_NAME"
 mc mb local/$BUCKET_NAME
 
 echo "Uploading seed images..."
-mc cp --recursive --quiet /seed local/$BUCKET_NAME
+mc cp --recursive --quiet /seed/* local/$BUCKET_NAME
 
 echo "Setting public read access..."
 mc anonymous set download local/$BUCKET_NAME

@@ -5,6 +5,7 @@ import com.rishi.PokePedia.model.*;
 import com.rishi.PokePedia.model.enums.*;
 import com.rishi.PokePedia.repository.PokemonRepository;
 import com.rishi.PokePedia.service.PokemonService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,6 +22,7 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    @Cacheable(value = "pokemonCache", key = "'id:' + #id", sync = true)
     public Optional<PokemonDto> getPokemonById(Integer id) {
         Optional<Pokemon> pokemon = pokemonRepository.getPokemonById(id);
         List<DexNumbers> dexNumbers = pokemonRepository.getDexNumbersFromPokemon(id);
@@ -32,6 +34,7 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    @Cacheable(value = "pokemonCache", key = "'name:' + #name.toLowerCase()", sync = true)
     public Optional<PokemonDto> getPokemonByName(String name) {
         Optional<Pokemon> pokemon = pokemonRepository.getPokemonByName(name);
         return pokemon.map(value -> {
@@ -46,6 +49,7 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    @Cacheable(value = "speciesCache", key = "'id:' + #id", sync = true)
     public Optional<SpeciesDto> getPokemonFromSpeciesId(Integer id) {
         Integer finalId;
 
@@ -70,6 +74,7 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    @Cacheable(value = "speciesCache", key = "'name:' + #name.toLowerCase()", sync = true)
     public Optional<SpeciesDto> getPokemonFromSpeciesName(String name) {
         Optional<Integer> id = pokemonRepository.getSpeciesId(name);
         return id.map(val -> {
@@ -81,6 +86,7 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    @Cacheable(value = "pokedexCache", key = "#name.toLowerCase()", sync = true)
     public List<PokedexDto> getDexByVersion(String name) {
         List<PokedexDto> dexes = new ArrayList<>();
 
@@ -133,17 +139,20 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
+    @Cacheable(value = "pokedexRegionCache", key = "#name.toLowerCase()", sync = true)
     public List<PokemonSnapDto> getDexByRegion(String name) {
         PokedexRegion region = PokedexRegion.fromName(name);
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
     }
 
     @Override
+    @Cacheable(value = "pokedexRegionCache", key = "region.name()", sync = true)
     public List<PokemonSnapDto> getDexByRegion(PokedexRegion region) {
         return mapToPokedexDto(pokemonRepository.getDexByRegion(region));
     }
 
     @Override
+    @Cacheable(value = "teamBuildingCache", key = "#versionGroupName.toLowerCase()", sync = true)
     public List<TeamBuildingDto> getTeamCandidates(String versionGroupName) {
         VersionGroup versionGroup = VersionGroup.fromName(versionGroupName);
         PokedexRegion[] regions = versionGroup.getRegions();

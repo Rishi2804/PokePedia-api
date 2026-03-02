@@ -7,6 +7,7 @@ import com.rishi.PokePedia.model.enums.LearnMethod;
 import com.rishi.PokePedia.model.enums.VersionGroup;
 import com.rishi.PokePedia.repository.MoveRepository;
 import com.rishi.PokePedia.service.MoveService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -26,12 +27,14 @@ public class MoveServiceImpl implements MoveService {
     }
 
     @Override
+    @Cacheable(value = "moveCache", sync = true)
     public List<MoveSnapDto> getMoves() {
         List<MoveSnap> moves = moveRepository.getMoves();
         return mapToMoveSnapDto(moves);
     }
 
     @Override
+    @Cacheable(value = "moveCache", key = "'id:' + #id", sync = true)
     public Optional<MoveDto> getMoveById(Integer id) {
         Optional<Move> move = moveRepository.getMoveById(id);
         return move.map(val -> {
@@ -42,6 +45,7 @@ public class MoveServiceImpl implements MoveService {
     }
 
     @Override
+    @Cacheable(value = "moveCache", key = "'name:' + #name.toLowerCase()", sync = true)
     public Optional<MoveDto> getMoveByName(String name) {
         Optional<Move> move = moveRepository.getMoveByName(name);
         return move.map(val -> {
