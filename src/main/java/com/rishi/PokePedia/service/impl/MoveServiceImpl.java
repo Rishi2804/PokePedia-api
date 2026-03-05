@@ -10,10 +10,7 @@ import com.rishi.PokePedia.service.MoveService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.rishi.PokePedia.service.utils.formatName;
@@ -27,8 +24,8 @@ public class MoveServiceImpl implements MoveService {
     }
 
     @Override
-    @Cacheable(value = "moveCache", sync = true)
-    public List<MoveSnapDto> getMoves() {
+    @Cacheable(value = "moveListCache", sync = true)
+    public ArrayList<MoveSnapDto> getMoves() {
         List<MoveSnap> moves = moveRepository.getMoves();
         return mapToMoveSnapDto(moves);
     }
@@ -55,7 +52,7 @@ public class MoveServiceImpl implements MoveService {
         });
     }
 
-    private List<MoveSnapDto> mapToMoveSnapDto(List<MoveSnap> moves) {
+    private ArrayList<MoveSnapDto> mapToMoveSnapDto(List<MoveSnap> moves) {
         return moves.stream().map(move -> new MoveSnapDto(
                 move.id(),
                 formatName(move.name(), false),
@@ -65,7 +62,7 @@ public class MoveServiceImpl implements MoveService {
                 move.accuracy(),
                 move.pp(),
                 move.gen()
-        )).toList();
+        )).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private MoveDto mapToMoveDto(Move move, List<MovePokemonLearnable> pokemon, List<PastMoveValues> pastMoveValues) {

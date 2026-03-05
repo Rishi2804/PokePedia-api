@@ -10,9 +10,11 @@ import com.rishi.PokePedia.service.AbilityService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.rishi.PokePedia.service.utils.formatName;
 
@@ -24,15 +26,15 @@ public class AbilityServiceImpl implements AbilityService {
     public AbilityServiceImpl(AbilityRepository abilityRepository) { this.abilityRepository = abilityRepository; }
 
     @Override
-    @Cacheable(value = "abilityCache", sync = true)
-    public List<AbilitySnapDto> getAbilities() {
+    @Cacheable(value = "abilityListCache", sync = true)
+    public ArrayList<AbilitySnapDto> getAbilities() {
         List<AbilitySnap> abilities = abilityRepository.getAbilities();
         return abilities.stream().map(ability ->
                 new AbilitySnapDto(
                     formatName(ability.name(), false),
                     ability.gen()
                 )
-        ).toList();
+        ).collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

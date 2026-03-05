@@ -28,6 +28,7 @@ services:
       - "5050:80"
   springboot-app:
     container_name: "pokepedia-api"
+    image: pokepedia/api:latest
     build:
       context: .
       dockerfile: Dockerfile

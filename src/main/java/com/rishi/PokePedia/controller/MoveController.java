@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class MoveController {
     public MoveController(MoveService moveService) { this.moveService = moveService; }
 
     @GetMapping("/")
-    public List<MoveSnapDto> getMoves() {
+    public ArrayList<MoveSnapDto> getMoves() {
         return moveService.getMoves();
     }
 
